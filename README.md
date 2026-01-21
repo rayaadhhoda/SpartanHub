@@ -1,4 +1,3 @@
 # SpartanHub
 
-Missing env 
-Missing node modules
+Missing env and node modules
