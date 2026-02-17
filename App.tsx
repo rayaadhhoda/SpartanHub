@@ -1074,7 +1074,7 @@ function App() {
       <footer className={`border-t mt-12 py-8 transition-colors ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <div className="w-full mx-auto px-4 text-center">
           <div className={`font-serif font-bold text-xl mb-2 ${isDarkMode ? 'text-gray-200' : 'text-sjsu-blue'}`}>SAN JOSÉ STATE UNIVERSITY</div>
-          <p className="text-sm text-gray-500 mb-3">© 2025 San José State University. All rights reserved.</p>
+          <p className="text-sm text-gray-500 mb-3">© 2026 San José State University. All rights reserved.</p>
 
           {/* Prototype Disclaimer */}
           <div className={`max-w-2xl mx-auto mt-4 p-4 rounded-lg border ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-300'}`}>
