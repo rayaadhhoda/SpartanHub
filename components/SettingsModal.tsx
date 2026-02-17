@@ -12,11 +12,11 @@ interface SettingsModalProps {
   onAdminLogin: (email: string, password: string) => Promise<boolean>;
 }
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  isDarkMode, 
-  toggleTheme, 
+const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen,
+  onClose,
+  isDarkMode,
+  toggleTheme,
   onOpenAdmin,
   userRole,
   onAdminLogin
@@ -34,7 +34,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
   const GOOGLE_GROUP_URL =
-  "https://groups.google.com/a/sjsu.edu/g/ai-teaching--learning-sjsu-group";
+    "https://groups.google.com/a/sjsu.edu/g/ai-teaching--learning-sjsu-group";
 
   // Reset internal state when modal opens/closes
   useEffect(() => {
@@ -69,11 +69,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const TabButton = ({ id, label, icon: Icon }: { id: 'general' | 'admin', label: string, icon: any }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all duration-200 group ${
-        activeTab === id 
-          ? 'bg-sjsu-blue text-white shadow-lg shadow-blue-900/20' 
+      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === id
+          ? 'bg-sjsu-blue text-white shadow-lg shadow-blue-900/20'
           : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-      }`}
+        }`}
     >
       <div className="flex items-center gap-3">
         <Icon size={18} className={`${activeTab === id ? 'text-sjsu-gold' : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300'}`} />
@@ -86,14 +85,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       ></div>
 
       {/* Modal Container */}
       <div className="bg-white dark:bg-gray-900 w-full max-w-5xl h-[80vh] rounded-2xl shadow-2xl flex overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-10 border border-gray-100 dark:border-gray-800">
-        
+
         {/* Sidebar */}
         <div className="w-72 bg-gray-50 dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col p-6">
           <div className="mb-8 pl-2">
@@ -102,33 +101,33 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             </h2>
             <p className="text-xs text-gray-500 dark:text-gray-500 font-semibold uppercase tracking-wider mt-1">Configuration</p>
           </div>
-          
+
           <div className="space-y-2 flex-1">
             <TabButton id="general" label="General & Appearance" icon={Monitor} />
             <TabButton id="admin" label="Admin Portal" icon={Shield} />
           </div>
 
-          <div className="mt-auto pt-6 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-400 text-center">
-            SpartanHub v2.5.0 <br/> Build 2025.10.25
+          <div className="mt-auto pt-6 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-400 text-center font-semibold">
+            Prototype
           </div>
         </div>
 
         {/* Content Area */}
         <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 relative">
-          
+
           {/* Mobile Close Button (Top Right) */}
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors z-20"
           >
             <X size={24} />
           </button>
 
           <div className="flex-1 overflow-y-auto p-8 lg:p-10 custom-scrollbar">
-            
+
             {activeTab === 'general' && (
               <div className="max-w-3xl space-y-10 animate-in slide-in-from-right-4 duration-300">
-                
+
                 {/* Section: Appearance */}
                 <section>
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Appearance</h3>
@@ -144,13 +143,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                         </p>
                       </div>
                     </div>
-                    
+
                     {/* Toggle Switch */}
-                    <button 
+                    <button
                       onClick={toggleTheme}
                       className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sjsu-blue dark:focus:ring-offset-gray-900 ${isDarkMode ? 'bg-sjsu-blue' : 'bg-gray-300'}`}
                     >
-                      <span 
+                      <span
                         className={`absolute top-1 left-1 bg-white w-5 h-5 rounded-full shadow-sm transform transition-transform duration-300 ${isDarkMode ? 'translate-x-7' : 'translate-x-0'}`}
                       />
                     </button>
@@ -158,80 +157,80 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 </section>
 
                 <hr className="border-gray-100 dark:border-gray-800" />
-                
+
                 {/* Section: Google Group Notifications */}
                 <section>
-                   <h3 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                  <h3 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                     <BellRing className="text-sjsu-blue dark:text-sjsu-gold" size={24} />
                     Notifications & Alerts
                   </h3>
-                  
-                  <div className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/10 dark:to-gray-800 border border-blue-100 dark:border-blue-900/30 rounded-xl p-6">
-                     <div className="flex items-start gap-4 mb-6">
-                        <div className="bg-sjsu-gold p-3 rounded-full text-white shrink-0">
-                          <Mail size={24} />
-                        </div>
-                        <div>
-                          <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Subscribe to SpartanHub Updates</h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                            Join the official Google Group to receive daily summaries of new resources, administrative announcements, and platform updates directly to your inbox.
-                          </p>
-                        </div>
-                     </div>
 
-                     {isSubscribed ? (
-                        <div className="flex flex-col items-center justify-center py-4 animate-in zoom-in-95">
-                           <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mb-3">
-                             <CheckCircle size={24} />
-                           </div>
-                           <h5 className="font-bold text-green-700 dark:text-green-400">Successfully Subscribed!</h5>
-                           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                             You will receive a confirmation email at <strong>{email}</strong> shortly.
-                           </p>
-                           <button 
-                             onClick={() => { setIsSubscribed(false); setEmail(''); }}
-                             className="mt-4 text-xs text-sjsu-blue hover:underline font-semibold"
-                           >
-                             Subscribe another email
-                           </button>
+                  <div className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/10 dark:to-gray-800 border border-blue-100 dark:border-blue-900/30 rounded-xl p-6">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="bg-sjsu-gold p-3 rounded-full text-white shrink-0">
+                        <Mail size={24} />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Subscribe to SpartanHub Updates</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                          Join the official Google Group to receive daily summaries of new resources, administrative announcements, and platform updates directly to your inbox.
+                        </p>
+                      </div>
+                    </div>
+
+                    {isSubscribed ? (
+                      <div className="flex flex-col items-center justify-center py-4 animate-in zoom-in-95">
+                        <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mb-3">
+                          <CheckCircle size={24} />
                         </div>
-                     ) : (
-                       <form onSubmit={handleSubscribe} className="space-y-4">
-                          <div>
-                            <p className="text-xs text-center text-gray-400">
-                              You’ll be prompted to sign in with your SJSU Google account.
-                            </p>
-                            {emailError && (
-                              <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                <AlertTriangle size={12} /> {emailError}
-                              </p>
-                            )}
-                          </div>
-                          <button 
-                            type="button"
-                            onClick={(e) => handleSubscribe(e as any)}
-                            className="w-full bg-sjsu-blue hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition-all flex items-center justify-center gap-2"
-                          >
-                            Join Google Group <ExternalLink size={16} />
-                          </button>
+                        <h5 className="font-bold text-green-700 dark:text-green-400">Successfully Subscribed!</h5>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          You will receive a confirmation email at <strong>{email}</strong> shortly.
+                        </p>
+                        <button
+                          onClick={() => { setIsSubscribed(false); setEmail(''); }}
+                          className="mt-4 text-xs text-sjsu-blue hover:underline font-semibold"
+                        >
+                          Subscribe another email
+                        </button>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleSubscribe} className="space-y-4">
+                        <div>
                           <p className="text-xs text-center text-gray-400">
-                            By subscribing, you agree to receive automated email notifications from SpartanHub.
+                            You’ll be prompted to sign in with your SJSU Google account.
                           </p>
-                       </form>
-                     )}
+                          {emailError && (
+                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                              <AlertTriangle size={12} /> {emailError}
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => handleSubscribe(e as any)}
+                          className="w-full bg-sjsu-blue hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition-all flex items-center justify-center gap-2"
+                        >
+                          Join Google Group <ExternalLink size={16} />
+                        </button>
+                        <p className="text-xs text-center text-gray-400">
+                          By subscribing, you agree to receive automated email notifications from SpartanHub.
+                        </p>
+                      </form>
+                    )}
                   </div>
                 </section>
 
                 <hr className="border-gray-100 dark:border-gray-800" />
 
-                 {/* Section: Status */}
+                {/* Section: Status */}
                 <section>
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">System Health</h3>
                   <div className="p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg flex items-start gap-3">
                     <div className="w-2 h-2 mt-2 bg-green-500 rounded-full animate-pulse"></div>
                     <div>
-                       <h4 className="font-bold text-green-800 dark:text-green-400 text-sm">All Systems Operational</h4>
-                       <p className="text-xs text-green-700 dark:text-green-500 mt-1">Knowledge base indexing active. Last sync: Today at 09:00 AM PST.</p>
+                      <h4 className="font-bold text-green-800 dark:text-green-400 text-sm">All Systems Operational</h4>
+                      <p className="text-xs text-green-700 dark:text-green-500 mt-1">Knowledge base indexing active. Last sync: Today at 09:00 AM PST.</p>
                     </div>
                   </div>
                 </section>
@@ -241,38 +240,38 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
             {activeTab === 'admin' && (
               <div className="h-full flex flex-col items-center justify-center animate-in slide-in-from-right-4 duration-300 text-center max-w-lg mx-auto">
-                
+
                 {userRole === 'admin' ? (
                   <>
                     <div className="mb-8 relative">
-                       <div className="w-24 h-24 bg-sjsu-blue/10 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
-                          <Lock size={48} className="text-sjsu-blue dark:text-blue-400" />
-                       </div>
-                       <div className="absolute -bottom-1 -right-1 bg-sjsu-gold p-2 rounded-full border-4 border-white dark:border-gray-900">
-                          <Key size={16} className="text-sjsu-blue" />
-                       </div>
+                      <div className="w-24 h-24 bg-sjsu-blue/10 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                        <Lock size={48} className="text-sjsu-blue dark:text-blue-400" />
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 bg-sjsu-gold p-2 rounded-full border-4 border-white dark:border-gray-900">
+                        <Key size={16} className="text-sjsu-blue" />
+                      </div>
                     </div>
 
                     <h3 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-3">
                       Admin Console Access
                     </h3>
                     <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-                      You are authenticated as an Administrator. 
+                      You are authenticated as an Administrator.
                       Access the dashboard to upload resources, manage tags, and view system analytics.
                     </p>
 
                     <div className="w-full space-y-4">
                       <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-left">
                         <div className="flex items-center gap-3 mb-2">
-                           <Shield size={16} className="text-sjsu-gold" />
-                           <span className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 tracking-wider">Security Level</span>
+                          <Shield size={16} className="text-sjsu-gold" />
+                          <span className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 tracking-wider">Security Level</span>
                         </div>
                         <p className="text-sm text-gray-700 dark:text-gray-300">
                           Administrator Permissions. Full access granted.
                         </p>
                       </div>
 
-                      <button 
+                      <button
                         onClick={onOpenAdmin}
                         className="w-full group relative flex items-center justify-center gap-3 px-8 py-4 bg-sjsu-blue hover:bg-blue-800 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-900/30 overflow-hidden"
                       >
@@ -310,9 +309,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                             setAuthError("");
                           }}
                           placeholder="Enter admin email"
-                          className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all dark:text-white ${
-                            authError ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-sjsu-blue'
-                          }`}
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all dark:text-white ${authError ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-sjsu-blue'
+                            }`}
                           required
                         />
                       </div>
@@ -328,9 +326,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                             setAuthError("");
                           }}
                           placeholder="Enter password"
-                          className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all dark:text-white ${
-                            authError ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-sjsu-blue'
-                          }`}
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all dark:text-white ${authError ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-sjsu-blue'
+                            }`}
                           required
                         />
                       </div>
