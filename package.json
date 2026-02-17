@@ -1,7 +1,7 @@
 {
   "name": "spartanhub",
   "private": true,
-  "version": "0.0.0",
+  "version": "Prototype",
   "type": "module",
   "scripts": {
     "dev": "vite",

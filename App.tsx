@@ -38,31 +38,31 @@ function App() {
   const [userRole, setUserRole] = useState<UserRole>('faculty');
 
   const [view, setView] = useState<'dashboard' | 'admin'>('dashboard');
-  
+
   // Persistent State: Resources
   const [resources, setResources] = useState<Resource[]>(INITIAL_RESOURCES);
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('All');
-  
+
   // Multi-select for Subjects
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  
+
   const [selectedLevel, setSelectedLevel] = useState<string>('All');
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
-  
+
   // Persistent State: Bookmarks
   const [selectedResourceIds, setSelectedResourceIds] = useState<Set<string>>(() => {
     const saved = loadState<string[]>(STORAGE_KEYS.BOOKMARKS, []);
     return new Set(saved);
   });
-  
+
   // Notification State
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  
+
   // Magnifier / Zoom State
   const [isMagnifierActive, setIsMagnifierActive] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(100);
@@ -74,15 +74,15 @@ function App() {
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xl'>('normal');
 
   // Persistent State: Dark Mode
-  const [isDarkMode, setIsDarkMode] = useState(() => 
+  const [isDarkMode, setIsDarkMode] = useState(() =>
     loadState(STORAGE_KEYS.THEME, false)
   );
 
   // Recent History
   const [recentResourceIds, setRecentResourceIds] = useState<string[]>([]);
-  
+
   const searchInputRef = useRef<HTMLInputElement>(null);
-  
+
   useEffect(() => {
     const base = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
 
@@ -151,7 +151,7 @@ function App() {
     const root = document.documentElement;
     // Reset Font Classes
     root.classList.remove('text-base', 'text-lg', 'text-xl');
-    
+
     // Apply Font Size
     if (fontSize === 'normal') root.classList.add('text-base');
     if (fontSize === 'large') root.classList.add('text-lg');
@@ -217,9 +217,9 @@ function App() {
     // New resources start with 0 stats
     newResource.views = 0;
     newResource.downloads = 0;
-    
+
     setResources(prev => [newResource, ...prev]);
-    
+
     // General notification for all online resources
     if (newResource.status === 'online') {
       setNotifications(prev => [{
@@ -246,7 +246,7 @@ function App() {
   const handleOverwriteDatabase = (newResources: Resource[]) => {
     setResources(newResources);
     if (isScreenReaderMode) announce("Database has been successfully updated from import.");
-    
+
     // Validate bookmarks against new data
     const newIds = new Set(newResources.map(r => r.id));
     setSelectedResourceIds(prev => {
@@ -428,10 +428,10 @@ function App() {
   // Sidebar Subject Multi-Select Logic
   const toggleSubjectFilter = (subject: string) => {
     setSelectedSubjects(prev => {
-      const newSelection = prev.includes(subject) 
+      const newSelection = prev.includes(subject)
         ? prev.filter(s => s !== subject)
         : [...prev, subject];
-      
+
       if (isScreenReaderMode) {
         announce(newSelection.includes(subject) ? `Selected ${subject}` : `Deselected ${subject}`);
       }
@@ -446,8 +446,8 @@ function App() {
 
   if (view === 'admin') {
     return (
-      <AdminConsole 
-        onBack={() => setView('dashboard')} 
+      <AdminConsole
+        onBack={() => setView('dashboard')}
         onUpload={handleUpload}
         onUpdate={handleUpdateResource}
         onBatchUpdate={handleBatchUpdateResources}
@@ -464,17 +464,17 @@ function App() {
     // Only show online resources in dashboard
     if (res.status !== 'online') return false;
 
-    const matchesSearch = res.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          res.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          res.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+    const matchesSearch = res.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      res.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      res.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
+
     const matchesType = activeFilter === 'All' || res.type === activeFilter;
-    
+
     // Multi-select subject matching: If array is empty, show all. Else, must be in array.
     const matchesSubject = selectedSubjects.length === 0 || selectedSubjects.includes(res.subject);
-    
+
     const matchesLevel = selectedLevel === 'All' || res.level === selectedLevel;
-    
+
     return matchesSearch && matchesType && matchesSubject && matchesLevel;
   });
 
@@ -496,10 +496,10 @@ function App() {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
-      
+
       {/* Skip to Content for Accessibility */}
-      <a 
-        href="#main-content" 
+      <a
+        href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-0 focus:left-0 focus:bg-sjsu-blue focus:text-white focus:p-4 focus:w-full text-center"
       >
         Skip to main content
@@ -509,24 +509,24 @@ function App() {
       {isAccessibilityOpen && isMagnifierActive && (
         <div className="fixed top-24 right-4 z-[60] w-72 bg-sjsu-blue text-white p-4 rounded-xl shadow-xl border border-white/20 animate-in fade-in slide-in-from-right-4">
           <div className="flex items-start gap-3">
-             <div className="bg-white/20 p-2 rounded-full">
-               <ZoomIn size={20} />
-             </div>
-             <div>
-               <h4 className="font-bold text-sm">Magnifier Active</h4>
-               <p className="text-xs text-blue-100 mt-1 leading-snug">
-                 Use <strong>Arrow Keys</strong> to pan and zoom.
-               </p>
-               <div className="mt-2 text-xs font-bold text-sjsu-gold">
-                 Current Level: {zoomLevel}%
-               </div>
-             </div>
+            <div className="bg-white/20 p-2 rounded-full">
+              <ZoomIn size={20} />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm">Magnifier Active</h4>
+              <p className="text-xs text-blue-100 mt-1 leading-snug">
+                Use <strong>Arrow Keys</strong> to pan and zoom.
+              </p>
+              <div className="mt-2 text-xs font-bold text-sjsu-gold">
+                Current Level: {zoomLevel}%
+              </div>
+            </div>
           </div>
         </div>
       )}
 
       {/* Sidebar Navigation */}
-      <div 
+      <div
         className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setIsSidebarOpen(false)}
       />
@@ -537,62 +537,61 @@ function App() {
             <Settings size={20} className="text-gray-400" />
           </button>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-          
+
           {/* Recently Viewed */}
           {recentResourceIds.length > 0 && (
-             <div className="mb-8">
-               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2 flex items-center gap-2">
-                 <Clock size={12} /> Recently Viewed
-               </h3>
-               <div className="space-y-1">
-                 {recentResourceIds.map(id => {
-                   const res = resources.find(r => r.id === id);
-                   if (!res) return null;
-                   return (
-                     <button
-                       key={id}
-                       onClick={() => {
-                         handleResourceClick(res);
-                         setIsSidebarOpen(false);
-                         if (isScreenReaderMode) announce(`Opening recently viewed: ${res.title}`);
-                       }}
-                       className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 truncate flex items-center gap-2"
-                     >
-                       <span className={`w-1.5 h-1.5 rounded-full ${
-                          res.type === 'VIDEO' ? 'bg-blue-400' : 
+            <div className="mb-8">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2 flex items-center gap-2">
+                <Clock size={12} /> Recently Viewed
+              </h3>
+              <div className="space-y-1">
+                {recentResourceIds.map(id => {
+                  const res = resources.find(r => r.id === id);
+                  if (!res) return null;
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => {
+                        handleResourceClick(res);
+                        setIsSidebarOpen(false);
+                        if (isScreenReaderMode) announce(`Opening recently viewed: ${res.title}`);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 truncate flex items-center gap-2"
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${res.type === 'VIDEO' ? 'bg-blue-400' :
                           res.type === 'PDF' ? 'bg-red-400' : 'bg-gray-400'
-                       }`}></span>
-                       <span className="truncate">{res.title}</span>
-                     </button>
-                   )
-                 })}
-               </div>
-             </div>
+                        }`}></span>
+                      <span className="truncate">{res.title}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           )}
 
           <div className="mb-8">
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Library</h3>
             <button
-               onClick={() => {
-                 setIsSidebarOpen(false);
-                 if (isScreenReaderMode) announce(`You have ${selectedResourceIds.size} saved resources`);
-               }}
-               className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center justify-between"
-             >
-               Saved Resources
-               <div className="bg-gray-100 dark:bg-gray-800 text-xs px-2 py-0.5 rounded-full text-gray-500">
-                  {selectedResourceIds.size}
-               </div>
-             </button>
+              onClick={() => {
+                setIsSidebarOpen(false);
+                if (isScreenReaderMode) announce(`You have ${selectedResourceIds.size} saved resources`);
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center justify-between"
+            >
+              Saved Resources
+              <div className="bg-gray-100 dark:bg-gray-800 text-xs px-2 py-0.5 rounded-full text-gray-500">
+                {selectedResourceIds.size}
+              </div>
+            </button>
           </div>
 
           {userRole === 'admin' && (
             <div className="mb-8">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Admin Tools</h3>
               <div className="space-y-1">
-                <button 
+                <button
                   onClick={() => handleQuickLinkAdd()}
                   className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center gap-2"
                 >
@@ -609,68 +608,65 @@ function App() {
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Browse by Level</h3>
             <div className="space-y-1">
               {['Undergraduate', 'Graduate', 'Faculty/Admin'].map(level => (
-                 <button
-                   key={level}
-                   onClick={() => {
-                     setSelectedLevel(level === selectedLevel ? 'All' : level);
-                     setIsSidebarOpen(false);
-                   }}
-                   className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-between group ${
-                     selectedLevel === level 
-                       ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400' 
-                       : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
-                   }`}
-                 >
-                   {level}
-                   {selectedLevel === level && <div className="w-1.5 h-1.5 rounded-full bg-sjsu-blue dark:bg-blue-400"></div>}
-                 </button>
+                <button
+                  key={level}
+                  onClick={() => {
+                    setSelectedLevel(level === selectedLevel ? 'All' : level);
+                    setIsSidebarOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-between group ${selectedLevel === level
+                      ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
+                    }`}
+                >
+                  {level}
+                  {selectedLevel === level && <div className="w-1.5 h-1.5 rounded-full bg-sjsu-blue dark:bg-blue-400"></div>}
+                </button>
               ))}
             </div>
           </div>
 
           <div>
-             <div className="flex items-center justify-between mb-3 px-2">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Subjects</h3>
-                {selectedSubjects.length > 0 && (
-                  <button 
-                    onClick={clearSubjectFilter}
-                    className="text-[10px] text-sjsu-blue dark:text-blue-400 hover:underline font-bold"
-                  >
-                    Clear ({selectedSubjects.length})
-                  </button>
-                )}
-             </div>
-             
-             <div className="space-y-1">
-               <button 
+            <div className="flex items-center justify-between mb-3 px-2">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Subjects</h3>
+              {selectedSubjects.length > 0 && (
+                <button
                   onClick={clearSubjectFilter}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${
-                    selectedSubjects.length === 0
-                       ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400 font-bold' 
-                       : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
+                  className="text-[10px] text-sjsu-blue dark:text-blue-400 hover:underline font-bold"
+                >
+                  Clear ({selectedSubjects.length})
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <button
+                onClick={clearSubjectFilter}
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${selectedSubjects.length === 0
+                    ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400 font-bold'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
                   }`}
-               >
-                 {selectedSubjects.length === 0 ? <CheckSquare size={16} /> : <Square size={16} />}
-                 All Subjects
-               </button>
-               {SJSU_SUBJECTS.map(subj => {
-                 const isSelected = selectedSubjects.includes(subj);
-                 return (
-                   <button 
-                     key={subj}
-                     onClick={() => toggleSubjectFilter(subj)}
-                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                       isSelected 
-                         ? 'bg-sjsu-blue text-white shadow-sm' 
-                         : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
-                     }`}
-                   >
-                     {isSelected ? <CheckSquare size={16} className="text-sjsu-gold" /> : <Square size={16} />}
-                     {subj}
-                   </button>
-                 );
-               })}
-             </div>
+              >
+                {selectedSubjects.length === 0 ? <CheckSquare size={16} /> : <Square size={16} />}
+                All Subjects
+              </button>
+              {SJSU_SUBJECTS.map(subj => {
+                const isSelected = selectedSubjects.includes(subj);
+                return (
+                  <button
+                    key={subj}
+                    onClick={() => toggleSubjectFilter(subj)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${isSelected
+                        ? 'bg-sjsu-blue text-white shadow-sm'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
+                      }`}
+                  >
+                    {isSelected ? <CheckSquare size={16} className="text-sjsu-gold" /> : <Square size={16} />}
+                    {subj}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -678,28 +674,33 @@ function App() {
       {/* Header */}
       <header className={`sticky top-0 z-30 shadow-sm border-b transition-colors duration-300 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <div className="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          
+
           {/* Logo Section */}
           <div className="flex items-center gap-4">
-             <button 
-               onClick={() => setIsSidebarOpen(true)}
-               aria-label="Open Navigation Menu"
-               className="p-2 -ml-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 rounded-lg transition-colors"
-             >
-               <Menu size={24} />
-             </button>
-             <img 
-               src="spartanasset.png" 
-               alt="Spartan Logo" 
-               className="h-12 w-auto object-contain"
-             />
-             <div className="hidden md:block h-10 w-px bg-gray-300 mx-2 dark:bg-gray-600"></div>
-             <div>
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Open Navigation Menu"
+              className="p-2 -ml-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <Menu size={24} />
+            </button>
+            <img
+              src="spartanasset.png"
+              alt="Spartan Logo"
+              className="h-12 w-auto object-contain"
+            />
+            <div className="hidden md:block h-10 w-px bg-gray-300 mx-2 dark:bg-gray-600"></div>
+            <div className="flex items-center gap-2">
+              <div>
                 <h1 className="text-2xl font-serif font-bold text-sjsu-blue tracking-tight leading-none dark:text-blue-400">
                   Spartan<span className="text-sjsu-gold">Hub</span>
                 </h1>
                 <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold dark:text-gray-400">Knowledge Base</p>
-             </div>
+              </div>
+              <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-sjsu-gold text-white rounded-md shadow-sm">
+                Prototype
+              </span>
+            </div>
           </div>
 
           {/* Search Bar */}
@@ -713,8 +714,8 @@ function App() {
               placeholder="Search courses... (Cmd + K)"
               aria-label="Search resources"
               className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg leading-5 focus:outline-none focus:ring-2 focus:ring-sjsu-blue focus:border-transparent transition-all sm:text-sm shadow-inner
-                ${isDarkMode 
-                  ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:bg-gray-700' 
+                ${isDarkMode
+                  ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:bg-gray-700'
                   : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white'}`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -723,116 +724,115 @@ function App() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            
+
             {/* Accessibility Menu */}
             <div className="relative">
-               <button
+              <button
                 onClick={() => setIsAccessibilityOpen(!isAccessibilityOpen)}
                 aria-label="Accessibility Settings"
-                className={`p-2 rounded-full transition-colors relative ${
-                  isAccessibilityOpen
+                className={`p-2 rounded-full transition-colors relative ${isAccessibilityOpen
                     ? 'bg-sjsu-blue text-white shadow-md'
                     : isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'
-                }`}
+                  }`}
                 title="Accessibility Settings"
-               >
-                 <Accessibility size={22} />
-               </button>
+              >
+                <Accessibility size={22} />
+              </button>
 
-               {isAccessibilityOpen && (
-                 <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 animate-in fade-in slide-in-from-top-2 p-4">
-                   <h3 className="text-sm font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
-                     <Accessibility size={16} /> Accessibility
-                   </h3>
-                   
-                   {/* Font Size Control */}
-                   <div className="mb-4">
-                      <label className="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-2 block">Text Size</label>
-                      <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                        <button 
-                          onClick={() => setFontSize('normal')}
-                          className={`flex-1 py-1 text-xs font-bold rounded ${fontSize === 'normal' ? 'bg-white dark:bg-gray-600 shadow text-sjsu-blue dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
-                        >
-                          Aa
-                        </button>
-                        <button 
-                          onClick={() => setFontSize('large')}
-                          className={`flex-1 py-1 text-sm font-bold rounded ${fontSize === 'large' ? 'bg-white dark:bg-gray-600 shadow text-sjsu-blue dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
-                        >
-                          Aa
-                        </button>
-                        <button 
-                          onClick={() => setFontSize('xl')}
-                          className={`flex-1 py-1 text-base font-bold rounded ${fontSize === 'xl' ? 'bg-white dark:bg-gray-600 shadow text-sjsu-blue dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
-                        >
-                          Aa
-                        </button>
-                      </div>
-                   </div>
+              {isAccessibilityOpen && (
+                <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 animate-in fade-in slide-in-from-top-2 p-4">
+                  <h3 className="text-sm font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                    <Accessibility size={16} /> Accessibility
+                  </h3>
 
-                   {/* High Contrast Toggle */}
-                   <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Eye size={16} /> High Contrast
-                      </span>
-                      <button 
-                        onClick={() => setIsHighContrast(!isHighContrast)}
-                        className={`w-10 h-5 rounded-full relative transition-colors ${isHighContrast ? 'bg-yellow-400' : 'bg-gray-300 dark:bg-gray-600'}`}
-                        aria-label="Toggle High Contrast"
+                  {/* Font Size Control */}
+                  <div className="mb-4">
+                    <label className="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-2 block">Text Size</label>
+                    <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                      <button
+                        onClick={() => setFontSize('normal')}
+                        className={`flex-1 py-1 text-xs font-bold rounded ${fontSize === 'normal' ? 'bg-white dark:bg-gray-600 shadow text-sjsu-blue dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
                       >
-                         <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isHighContrast ? 'translate-x-5' : 'translate-x-0'}`} />
+                        Aa
                       </button>
-                   </div>
-
-                   {/* Screen Reader Optimization Toggle */}
-                   <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <Speaker size={16} /> Screen Reader
-                      </span>
-                      <button 
-                        onClick={() => toggleScreenReaderMode()}
-                        className={`w-10 h-5 rounded-full relative transition-colors ${isScreenReaderMode ? 'bg-sjsu-blue' : 'bg-gray-300 dark:bg-gray-600'}`}
-                        aria-label="Toggle Screen Reader Optimization"
+                      <button
+                        onClick={() => setFontSize('large')}
+                        className={`flex-1 py-1 text-sm font-bold rounded ${fontSize === 'large' ? 'bg-white dark:bg-gray-600 shadow text-sjsu-blue dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
                       >
-                         <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isScreenReaderMode ? 'translate-x-5' : 'translate-x-0'}`} />
+                        Aa
                       </button>
-                   </div>
-
-                   {/* Magnifier Toggle */}
-                   <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <ZoomIn size={16} /> Magnifier
-                      </span>
-                      <button 
-                        onClick={() => setIsMagnifierActive(!isMagnifierActive)}
-                        className={`w-10 h-5 rounded-full relative transition-colors ${isMagnifierActive ? 'bg-sjsu-blue' : 'bg-gray-300 dark:bg-gray-600'}`}
-                        aria-label="Toggle Magnifier"
+                      <button
+                        onClick={() => setFontSize('xl')}
+                        className={`flex-1 py-1 text-base font-bold rounded ${fontSize === 'xl' ? 'bg-white dark:bg-gray-600 shadow text-sjsu-blue dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
                       >
-                         <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isMagnifierActive ? 'translate-x-5' : 'translate-x-0'}`} />
+                        Aa
                       </button>
-                   </div>
+                    </div>
+                  </div>
 
-                    {/* Dark Mode Toggle */}
-                   <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        {isDarkMode ? <Moon size={16} /> : <Sun size={16} />} Dark Mode
-                      </span>
-                      <button 
-                        onClick={toggleTheme}
-                        className={`w-10 h-5 rounded-full relative transition-colors ${isDarkMode ? 'bg-sjsu-blue' : 'bg-gray-300'}`}
-                        aria-label="Toggle Dark Mode"
-                      >
-                         <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isDarkMode ? 'translate-x-5' : 'translate-x-0'}`} />
-                      </button>
-                   </div>
+                  {/* High Contrast Toggle */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                      <Eye size={16} /> High Contrast
+                    </span>
+                    <button
+                      onClick={() => setIsHighContrast(!isHighContrast)}
+                      className={`w-10 h-5 rounded-full relative transition-colors ${isHighContrast ? 'bg-yellow-400' : 'bg-gray-300 dark:bg-gray-600'}`}
+                      aria-label="Toggle High Contrast"
+                    >
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isHighContrast ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                  </div>
 
-                 </div>
-               )}
+                  {/* Screen Reader Optimization Toggle */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                      <Speaker size={16} /> Screen Reader
+                    </span>
+                    <button
+                      onClick={() => toggleScreenReaderMode()}
+                      className={`w-10 h-5 rounded-full relative transition-colors ${isScreenReaderMode ? 'bg-sjsu-blue' : 'bg-gray-300 dark:bg-gray-600'}`}
+                      aria-label="Toggle Screen Reader Optimization"
+                    >
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isScreenReaderMode ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                  </div>
+
+                  {/* Magnifier Toggle */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                      <ZoomIn size={16} /> Magnifier
+                    </span>
+                    <button
+                      onClick={() => setIsMagnifierActive(!isMagnifierActive)}
+                      className={`w-10 h-5 rounded-full relative transition-colors ${isMagnifierActive ? 'bg-sjsu-blue' : 'bg-gray-300 dark:bg-gray-600'}`}
+                      aria-label="Toggle Magnifier"
+                    >
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isMagnifierActive ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                  </div>
+
+                  {/* Dark Mode Toggle */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                      {isDarkMode ? <Moon size={16} /> : <Sun size={16} />} Dark Mode
+                    </span>
+                    <button
+                      onClick={toggleTheme}
+                      className={`w-10 h-5 rounded-full relative transition-colors ${isDarkMode ? 'bg-sjsu-blue' : 'bg-gray-300'}`}
+                      aria-label="Toggle Dark Mode"
+                    >
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${isDarkMode ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                  </div>
+
+                </div>
+              )}
             </div>
 
             {/* Notification Bell */}
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setShowNotifications(!showNotifications)}
                 aria-label="Notifications"
                 className={`relative p-2 rounded-full transition-colors ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`}
@@ -867,13 +867,13 @@ function App() {
                 </div>
               )}
             </div>
-            
-            <button 
+
+            <button
               onClick={() => setIsSettingsOpen(true)}
               aria-label="Settings"
               className={`flex items-center gap-2 p-1.5 pr-3 rounded-full border transition-all cursor-pointer group
-                ${isDarkMode 
-                  ? 'bg-gray-800 border-gray-700 hover:border-sjsu-gold text-gray-200' 
+                ${isDarkMode
+                  ? 'bg-gray-800 border-gray-700 hover:border-sjsu-gold text-gray-200'
                   : 'bg-white border-gray-200 hover:border-sjsu-gold text-gray-700 shadow-sm'}`}
             >
               <div className="bg-sjsu-blue text-white p-1.5 rounded-full">
@@ -881,9 +881,9 @@ function App() {
               </div>
               <span className="text-sm font-semibold hidden lg:block">Settings</span>
             </button>
-            
+
             {userRole === 'admin' && (
-              <button 
+              <button
                 onClick={handleLogout}
                 className="ml-2 text-xs text-gray-400 hover:text-red-500 hover:underline"
               >
@@ -895,29 +895,29 @@ function App() {
       </header>
 
       {/* Main Content - Scalable for Magnifier */}
-      <main 
+      <main
         id="main-content"
         className="flex-1 w-full px-4 sm:px-6 lg:px-8 py-8 transition-transform duration-200 ease-out origin-top"
         style={{ zoom: `${zoomLevel}%` }}
       >
-        
+
         {/* Page Header & Filters */}
         <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-6">
           <div>
             <h2 className="text-3xl font-serif font-bold text-gray-900 dark:text-white">Dashboard</h2>
             <p className="text-gray-500 mt-1 dark:text-gray-400">
-              Welcome, {currentUser}. 
+              Welcome, {currentUser}.
               <span className={`ml-2 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide ${userRole === 'admin' ? 'bg-sjsu-blue text-white' : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'}`}>
                 {userRole}
               </span>
             </p>
           </div>
-          
+
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-            
+
             {/* Filters Row */}
             <div className="flex items-center gap-3">
-              
+
               {/* Subject Dropdown */}
               <div className="relative">
                 <select
@@ -925,16 +925,16 @@ function App() {
                   onChange={(e) => {
                     const val = e.target.value;
                     if (val === 'All') {
-                        clearSubjectFilter();
+                      clearSubjectFilter();
                     } else {
-                        setSelectedSubjects([val]);
-                        if (isScreenReaderMode) announce(`Subject filter set to ${val}`);
+                      setSelectedSubjects([val]);
+                      if (isScreenReaderMode) announce(`Subject filter set to ${val}`);
                     }
                   }}
                   aria-label="Filter by Subject"
                   className={`appearance-none pl-4 pr-10 py-2 border rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sjsu-blue cursor-pointer shadow-sm transition-all min-w-[140px] max-w-[200px]
-                    ${isDarkMode 
-                      ? 'bg-gray-800 border-gray-700 text-gray-200 hover:border-sjsu-blue' 
+                    ${isDarkMode
+                      ? 'bg-gray-800 border-gray-700 text-gray-200 hover:border-sjsu-blue'
                       : 'bg-white border-gray-200 text-gray-700 hover:border-sjsu-blue'}`}
                 >
                   <option value="All">All Subjects</option>
@@ -956,8 +956,8 @@ function App() {
                   }}
                   aria-label="Filter by Academic Level"
                   className={`appearance-none pl-4 pr-10 py-2 border rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sjsu-blue cursor-pointer shadow-sm transition-all min-w-[120px]
-                    ${isDarkMode 
-                      ? 'bg-gray-800 border-gray-700 text-gray-200 hover:border-sjsu-blue' 
+                    ${isDarkMode
+                      ? 'bg-gray-800 border-gray-700 text-gray-200 hover:border-sjsu-blue'
                       : 'bg-white border-gray-200 text-gray-700 hover:border-sjsu-blue'}`}
                 >
                   <option value="All">All Levels</option>
@@ -982,10 +982,10 @@ function App() {
                   }}
                   aria-pressed={activeFilter === filter}
                   className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap border
-                    ${activeFilter === filter 
-                      ? 'bg-sjsu-blue text-white shadow-md border-sjsu-blue' 
-                      : isDarkMode 
-                        ? 'bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700' 
+                    ${activeFilter === filter
+                      ? 'bg-sjsu-blue text-white shadow-md border-sjsu-blue'
+                      : isDarkMode
+                        ? 'bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700'
                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                 >
                   {filter === 'All' ? 'All Types' : filter}
@@ -1006,9 +1006,9 @@ function App() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {popularResources.map(resource => (
-                <ResourceCard 
-                  key={`popular-${resource.id}`} 
-                  resource={resource} 
+                <ResourceCard
+                  key={`popular-${resource.id}`}
+                  resource={resource}
                   onClick={handleResourceClick}
                   onTagClick={handleTagClick}
                   isSelected={selectedResourceIds.has(resource.id)}
@@ -1019,20 +1019,20 @@ function App() {
                 />
               ))}
             </div>
-             <div className="flex items-center gap-4 py-8">
-               <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
-               <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">All Resources</span>
-               <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
-             </div>
+            <div className="flex items-center gap-4 py-8">
+              <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">All Resources</span>
+              <div className="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
+            </div>
           </div>
         )}
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredResources.map(resource => (
-            <ResourceCard 
-              key={resource.id} 
-              resource={resource} 
+            <ResourceCard
+              key={resource.id}
+              resource={resource}
               onClick={handleResourceClick}
               onTagClick={handleTagClick}
               isSelected={selectedResourceIds.has(resource.id)}
@@ -1047,30 +1047,30 @@ function App() {
         {filteredResources.length === 0 && (
           <div className={`text-center py-20 rounded-xl border border-dashed transition-colors
             ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}>
-             <div className="text-gray-300 mb-4 dark:text-gray-600">
-               <Filter size={64} className="mx-auto opacity-50" />
-             </div>
-             <h3 className="text-xl font-bold text-gray-600 dark:text-gray-300">
-               {resources.length === 0 ? "Knowledge Base Empty" : "No resources found"}
-             </h3>
-             <p className="text-gray-400 dark:text-gray-500 mt-2 max-w-sm mx-auto">
-               {resources.length === 0 
-                 ? "The database is currently empty. Login to the Admin Console to upload content."
-                 : "Try adjusting your subject, level, or type filters."}
-             </p>
-             {(searchTerm || activeFilter !== 'All' || selectedSubjects.length > 0 || selectedLevel !== 'All') && resources.length > 0 && (
-               <button 
-                 onClick={() => {
-                   setSearchTerm('');
-                   setActiveFilter('All');
-                   clearSubjectFilter();
-                   setSelectedLevel('All');
-                 }}
-                 className="mt-4 text-sjsu-blue hover:underline font-medium dark:text-blue-400"
-               >
-                 Clear all filters
-               </button>
-             )}
+            <div className="text-gray-300 mb-4 dark:text-gray-600">
+              <Filter size={64} className="mx-auto opacity-50" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-600 dark:text-gray-300">
+              {resources.length === 0 ? "Knowledge Base Empty" : "No resources found"}
+            </h3>
+            <p className="text-gray-400 dark:text-gray-500 mt-2 max-w-sm mx-auto">
+              {resources.length === 0
+                ? "The database is currently empty. Login to the Admin Console to upload content."
+                : "Try adjusting your subject, level, or type filters."}
+            </p>
+            {(searchTerm || activeFilter !== 'All' || selectedSubjects.length > 0 || selectedLevel !== 'All') && resources.length > 0 && (
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setActiveFilter('All');
+                  clearSubjectFilter();
+                  setSelectedLevel('All');
+                }}
+                className="mt-4 text-sjsu-blue hover:underline font-medium dark:text-blue-400"
+              >
+                Clear all filters
+              </button>
+            )}
           </div>
         )}
       </main>
@@ -1078,22 +1078,33 @@ function App() {
       {/* Footer */}
       <footer className={`border-t mt-12 py-8 transition-colors ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <div className="w-full mx-auto px-4 text-center">
-           <div className={`font-serif font-bold text-xl mb-2 ${isDarkMode ? 'text-gray-200' : 'text-sjsu-blue'}`}>SAN JOSÉ STATE UNIVERSITY</div>
-           <p className="text-sm text-gray-500">© 2025 San José State University. All rights reserved.</p>
+          <div className={`font-serif font-bold text-xl mb-2 ${isDarkMode ? 'text-gray-200' : 'text-sjsu-blue'}`}>SAN JOSÉ STATE UNIVERSITY</div>
+          <p className="text-sm text-gray-500 mb-3">© 2025 San José State University. All rights reserved.</p>
+
+          {/* Prototype Disclaimer */}
+          <div className={`max-w-2xl mx-auto mt-4 p-4 rounded-lg border ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-300'}`}>
+            <p className={`text-xs font-semibold mb-1 ${isDarkMode ? 'text-sjsu-gold' : 'text-sjsu-blue'}`}>
+              ⚠️ PROTOTYPE VERSION
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              This is a prototype version of SpartanHub currently under active development.
+              Features and functionality may change without notice. Please report any issues or feedback to the development team.
+            </p>
+          </div>
         </div>
       </footer>
 
       {/* Interactive Elements */}
-      <AIChatWidget 
-        resources={resources} 
+      <AIChatWidget
+        resources={resources}
         selectedResourceIds={selectedResourceIds}
         onToggleResource={toggleResourceSelection}
         isScreenReaderMode={isScreenReaderMode}
         onAnnounce={announce}
       />
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
         onOpenAdmin={() => {
@@ -1103,9 +1114,9 @@ function App() {
         userRole={userRole}
         onAdminLogin={handleAdminLogin}
       />
-      <ResourceViewerModal 
-        resource={selectedResource} 
-        onClose={() => setSelectedResource(null)} 
+      <ResourceViewerModal
+        resource={selectedResource}
+        onClose={() => setSelectedResource(null)}
         onAnnounce={announce}
         isScreenReaderMode={isScreenReaderMode}
         allResources={resources}
