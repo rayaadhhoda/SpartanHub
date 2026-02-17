@@ -561,7 +561,7 @@ function App() {
                       className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 truncate flex items-center gap-2"
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${res.type === 'VIDEO' ? 'bg-blue-400' :
-                          res.type === 'PDF' ? 'bg-red-400' : 'bg-gray-400'
+                        res.type === 'PDF' ? 'bg-red-400' : 'bg-gray-400'
                         }`}></span>
                       <span className="truncate">{res.title}</span>
                     </button>
@@ -615,8 +615,8 @@ function App() {
                     setIsSidebarOpen(false);
                   }}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-between group ${selectedLevel === level
-                      ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
+                    ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
                     }`}
                 >
                   {level}
@@ -643,8 +643,8 @@ function App() {
               <button
                 onClick={clearSubjectFilter}
                 className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${selectedSubjects.length === 0
-                    ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400 font-bold'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
+                  ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400 font-bold'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
                   }`}
               >
                 {selectedSubjects.length === 0 ? <CheckSquare size={16} /> : <Square size={16} />}
@@ -657,8 +657,8 @@ function App() {
                     key={subj}
                     onClick={() => toggleSubjectFilter(subj)}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${isSelected
-                        ? 'bg-sjsu-blue text-white shadow-sm'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
+                      ? 'bg-sjsu-blue text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
                       }`}
                   >
                     {isSelected ? <CheckSquare size={16} className="text-sjsu-gold" /> : <Square size={16} />}
@@ -690,16 +690,11 @@ function App() {
               className="h-12 w-auto object-contain"
             />
             <div className="hidden md:block h-10 w-px bg-gray-300 mx-2 dark:bg-gray-600"></div>
-            <div className="flex items-center gap-2">
-              <div>
-                <h1 className="text-2xl font-serif font-bold text-sjsu-blue tracking-tight leading-none dark:text-blue-400">
-                  Spartan<span className="text-sjsu-gold">Hub</span>
-                </h1>
-                <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold dark:text-gray-400">Knowledge Base</p>
-              </div>
-              <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-sjsu-gold text-white rounded-md shadow-sm">
-                Prototype
-              </span>
+            <div>
+              <h1 className="text-2xl font-serif font-bold text-sjsu-blue tracking-tight leading-none dark:text-blue-400">
+                Spartan<span className="text-sjsu-gold">Hub</span>
+              </h1>
+              <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold dark:text-gray-400">Knowledge Base</p>
             </div>
           </div>
 
@@ -731,8 +726,8 @@ function App() {
                 onClick={() => setIsAccessibilityOpen(!isAccessibilityOpen)}
                 aria-label="Accessibility Settings"
                 className={`p-2 rounded-full transition-colors relative ${isAccessibilityOpen
-                    ? 'bg-sjsu-blue text-white shadow-md'
-                    : isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'
+                  ? 'bg-sjsu-blue text-white shadow-md'
+                  : isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'
                   }`}
                 title="Accessibility Settings"
               >
