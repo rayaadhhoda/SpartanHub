@@ -41,6 +41,7 @@ function App() {
 
   // Persistent State: Resources
   const [resources, setResources] = useState<Resource[]>(INITIAL_RESOURCES);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -94,6 +95,8 @@ function App() {
         setResources(data);
       } catch (e) {
         console.error("Failed to load resources from backend", e);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, []);
@@ -493,6 +496,31 @@ function App() {
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const currentSubjectValue = selectedSubjects.length === 1 ? selectedSubjects[0] : (selectedSubjects.length > 1 ? 'Multiple' : 'All');
+
+  if (isLoading) {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center font-sans transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        {/* Spinner */}
+        <div className="relative flex items-center justify-center mb-8">
+          {/* Outer ring */}
+          <div className="w-20 h-20 rounded-full border-4 border-gray-200 dark:border-gray-700 absolute" />
+          {/* Spinning arc */}
+          <div className="w-20 h-20 rounded-full border-4 border-transparent border-t-sjsu-blue dark:border-t-blue-400 animate-spin" />
+          {/* Center dot */}
+          <div className="absolute w-5 h-5 rounded-full bg-sjsu-gold" />
+        </div>
+
+        {/* Wordmark */}
+        <h1 className="text-3xl font-serif font-bold text-sjsu-blue dark:text-blue-400 tracking-tight mb-1">
+          Spartan<span className="text-sjsu-gold">Hub</span>
+        </h1>
+        <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-8">Knowledge Base</p>
+
+        {/* Status */}
+        <p className="text-sm text-gray-500 dark:text-gray-400 animate-pulse">Connecting to server…</p>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
