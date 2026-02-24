@@ -510,7 +510,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
             {/* Admin Tab */}
             {activeTab === 'admin' && (
-              <div className="h-full flex flex-col items-center justify-center animate-in slide-in-from-right-4 duration-300 text-center max-w-lg mx-auto">
+              <div className="flex flex-col items-center py-8 animate-in slide-in-from-right-4 duration-300 text-center max-w-lg mx-auto w-full">
                 {renderAdminContent()}
               </div>
             )}
