@@ -74,11 +74,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   // Auto-focus inputs when MFA steps appear
   useEffect(() => {
-    if (mfaRequired && isOpen) setTimeout(() => totpInputRef.current?.focus(), 100);
+    if (mfaRequired && isOpen) {
+      setActiveTab('admin');
+      setTimeout(() => totpInputRef.current?.focus(), 150);
+    }
   }, [mfaRequired, isOpen]);
 
   useEffect(() => {
-    if (mfaEnrollData && isOpen) setTimeout(() => enrollInputRef.current?.focus(), 100);
+    if (mfaEnrollData && isOpen) {
+      setActiveTab('admin');
+      setTimeout(() => enrollInputRef.current?.focus(), 150);
+    }
   }, [mfaEnrollData, isOpen]);
 
   if (!isOpen) return null;
@@ -89,12 +95,22 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     setIsSubmitting(true);
     try {
       const result = await onAdminLogin(adminEmail.trim(), adminPassword);
-      if (result === true || result === 'mfa_required' || result === 'mfa_enroll') {
+      console.log('[SpartanHub] Login result:', result);
+      if (result === true) {
+        // No MFA enrolled — grant access and open console
+        setAdminEmail('');
+        setAdminPassword('');
+        onOpenAdmin();
+      } else if (result === 'mfa_required' || result === 'mfa_enroll') {
+        // MFA step — parent state update will show the next screen
         setAdminEmail('');
         setAdminPassword('');
       } else {
         setAuthError('Invalid credentials or not authorized as admin.');
       }
+    } catch (err) {
+      console.error('[SpartanHub] Login error:', err);
+      setAuthError('An error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -149,8 +165,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     <button
       onClick={() => setActiveTab(id)}
       className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all duration-200 group ${activeTab === id
-          ? 'bg-sjsu-blue text-white shadow-lg shadow-blue-900/20'
-          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+        ? 'bg-sjsu-blue text-white shadow-lg shadow-blue-900/20'
+        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
         }`}
     >
       <div className="flex items-center gap-3">
