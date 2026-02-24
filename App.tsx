@@ -39,6 +39,7 @@ function App() {
 
   const [view, setView] = useState<'dashboard' | 'admin'>('dashboard');
   const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
+  const [mfaEnrollData, setMfaEnrollData] = useState<{ factorId: string; qrCode: string; secret: string } | null>(null);
 
   // Persistent State: Resources
   const [resources, setResources] = useState<Resource[]>(INITIAL_RESOURCES);
@@ -307,7 +308,7 @@ function App() {
   //   const userEmail = (data.user.email || "").toLowerCase();
   //   return adminEmails.includes(userEmail);
   // };
-  const handleAdminLogin = async (email: string, password: string): Promise<boolean | 'mfa_required'> => {
+  const handleAdminLogin = async (email: string, password: string): Promise<boolean | 'mfa_required' | 'mfa_enroll'> => {
     const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
       .split(",")
       .map((s: string) => s.trim().toLowerCase())
@@ -323,19 +324,32 @@ function App() {
     const userEmail = (data.user?.email || "").toLowerCase();
     if (!adminEmails.includes(userEmail)) return false;
 
-    // Check for enrolled TOTP factors
+    // Check for already-enrolled TOTP factors
     const { data: mfaData } = await supabase.auth.mfa.listFactors();
     const totpFactor = mfaData?.totp?.find(f => f.status === 'verified');
 
     if (totpFactor) {
-      // Password OK, MFA required next
+      // Enrolled — challenge the user for the code
       setMfaFactorId(totpFactor.id);
       return 'mfa_required';
     }
 
-    // No MFA enrolled — grant access directly
-    setUserRole('admin');
-    return true;
+    // Not enrolled — kick off enrollment and show QR code
+    const { data: enrollData, error: enrollError } = await supabase.auth.mfa.enroll({
+      factorType: 'totp',
+      issuer: 'SpartanHub',
+      friendlyName: 'SpartanHub Admin',
+    });
+    if (enrollError || !enrollData) {
+      console.error('MFA enroll error:', enrollError?.message);
+      return false;
+    }
+    setMfaEnrollData({
+      factorId: enrollData.id,
+      qrCode: enrollData.totp.qr_code,
+      secret: enrollData.totp.secret,
+    });
+    return 'mfa_enroll';
   };
 
   const handleMfaVerify = async (code: string): Promise<boolean> => {
@@ -345,10 +359,25 @@ function App() {
       code,
     });
     if (error) {
-      console.error("MFA verify error:", error.message);
+      console.error('MFA verify error:', error.message);
       return false;
     }
     setMfaFactorId(null);
+    setUserRole('admin');
+    return true;
+  };
+
+  const handleMfaEnrollComplete = async (code: string): Promise<boolean> => {
+    if (!mfaEnrollData) return false;
+    const { error } = await supabase.auth.mfa.challengeAndVerify({
+      factorId: mfaEnrollData.factorId,
+      code,
+    });
+    if (error) {
+      console.error('MFA enroll confirm error:', error.message);
+      return false;
+    }
+    setMfaEnrollData(null);
     setUserRole('admin');
     return true;
   };
@@ -1156,6 +1185,8 @@ function App() {
         onAdminLogin={handleAdminLogin}
         mfaRequired={!!mfaFactorId}
         onMfaVerify={handleMfaVerify}
+        mfaEnrollData={mfaEnrollData}
+        onMfaEnrollComplete={handleMfaEnrollComplete}
       />
       <ResourceViewerModal
         resource={selectedResource}
