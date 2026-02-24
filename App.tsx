@@ -38,6 +38,7 @@ function App() {
   const [userRole, setUserRole] = useState<UserRole>('faculty');
 
   const [view, setView] = useState<'dashboard' | 'admin'>('dashboard');
+  const [mfaFactorId, setMfaFactorId] = useState<string | null>(null);
 
   // Persistent State: Resources
   const [resources, setResources] = useState<Resource[]>(INITIAL_RESOURCES);
@@ -306,34 +307,50 @@ function App() {
   //   const userEmail = (data.user.email || "").toLowerCase();
   //   return adminEmails.includes(userEmail);
   // };
-  const handleAdminLogin = async (email: string, password: string) => {
+  const handleAdminLogin = async (email: string, password: string): Promise<boolean | 'mfa_required'> => {
     const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
       .split(",")
       .map((s: string) => s.trim().toLowerCase())
       .filter(Boolean);
 
-    console.log("VITE_ADMIN_EMAILS loaded:", adminEmails);
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       console.error("Supabase signInWithPassword error:", error.message);
-      // TEMP: show exact error to UI
-      alert(error.message);
       return false;
     }
 
     const userEmail = (data.user?.email || "").toLowerCase();
-    console.log("Signed in as:", userEmail);
+    if (!adminEmails.includes(userEmail)) return false;
 
-    const isAdmin = adminEmails.includes(userEmail);
-    console.log("Is admin?", isAdmin);
+    // Check for enrolled TOTP factors
+    const { data: mfaData } = await supabase.auth.mfa.listFactors();
+    const totpFactor = mfaData?.totp?.find(f => f.status === 'verified');
 
-    if (isAdmin) setUserRole("admin");
-    return isAdmin;
+    if (totpFactor) {
+      // Password OK, MFA required next
+      setMfaFactorId(totpFactor.id);
+      return 'mfa_required';
+    }
+
+    // No MFA enrolled — grant access directly
+    setUserRole('admin');
+    return true;
+  };
+
+  const handleMfaVerify = async (code: string): Promise<boolean> => {
+    if (!mfaFactorId) return false;
+    const { error } = await supabase.auth.mfa.challengeAndVerify({
+      factorId: mfaFactorId,
+      code,
+    });
+    if (error) {
+      console.error("MFA verify error:", error.message);
+      return false;
+    }
+    setMfaFactorId(null);
+    setUserRole('admin');
+    return true;
   };
 
 
@@ -462,6 +479,7 @@ function App() {
       />
     );
   }
+
 
   const filteredResources = resources.filter(res => {
     // Only show online resources in dashboard
@@ -1136,6 +1154,8 @@ function App() {
         }}
         userRole={userRole}
         onAdminLogin={handleAdminLogin}
+        mfaRequired={!!mfaFactorId}
+        onMfaVerify={handleMfaVerify}
       />
       <ResourceViewerModal
         resource={selectedResource}
