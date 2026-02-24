@@ -112,7 +112,25 @@ function App() {
     const applyRoleFromSession = async () => {
       const { data } = await supabase.auth.getSession();
       const email = (data.session?.user?.email || "").toLowerCase();
-      setUserRole(adminEmails.includes(email) ? "admin" : "student");
+
+      if (!data.session) {
+        setUserRole('faculty');
+        return;
+      }
+
+      if (!adminEmails.includes(email)) {
+        setUserRole('student');
+        return;
+      }
+
+      // Admin email detected — only grant admin if session is AAL2 (MFA completed)
+      const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aalData?.currentLevel === 'aal2') {
+        setUserRole('admin');
+      } else {
+        // AAL1 only — user is signed in but hasn't completed MFA yet
+        setUserRole('student');
+      }
     };
 
     applyRoleFromSession();
@@ -317,33 +335,44 @@ function App() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      console.error("Supabase signInWithPassword error:", error.message);
+      console.error('[SpartanHub] signInWithPassword error:', error.message);
       return false;
     }
 
     const userEmail = (data.user?.email || "").toLowerCase();
     if (!adminEmails.includes(userEmail)) return false;
 
-    // Check for already-enrolled TOTP factors
+    // List ALL TOTP factors (verified and unverified)
     const { data: mfaData } = await supabase.auth.mfa.listFactors();
-    const totpFactor = mfaData?.totp?.find(f => f.status === 'verified');
+    const allTotp = mfaData?.totp ?? [];
+    console.log('[SpartanHub] TOTP factors:', allTotp);
 
-    if (totpFactor) {
-      // Enrolled — challenge the user for the code
-      setMfaFactorId(totpFactor.id);
+    const verifiedFactor = allTotp.find(f => f.status === 'verified');
+    const unverifiedFactor = allTotp.find(f => f.status !== 'verified');
+
+    if (verifiedFactor) {
+      // Already enrolled — challenge the user
+      setMfaFactorId(verifiedFactor.id);
       return 'mfa_required';
     }
 
-    // Not enrolled — kick off enrollment and show QR code
+    // Clean up any stale unverified factors before enrolling fresh
+    if (unverifiedFactor) {
+      console.log('[SpartanHub] Removing stale unverified factor:', unverifiedFactor.id);
+      await supabase.auth.mfa.unenroll({ factorId: unverifiedFactor.id });
+    }
+
+    // Enroll fresh TOTP factor
     const { data: enrollData, error: enrollError } = await supabase.auth.mfa.enroll({
       factorType: 'totp',
       issuer: 'SpartanHub',
       friendlyName: 'SpartanHub Admin',
     });
     if (enrollError || !enrollData) {
-      console.error('MFA enroll error:', enrollError?.message);
+      console.error('[SpartanHub] MFA enroll error:', enrollError?.message);
       return false;
     }
+    console.log('[SpartanHub] Enrollment started, factor ID:', enrollData.id);
     setMfaEnrollData({
       factorId: enrollData.id,
       qrCode: enrollData.totp.qr_code,
