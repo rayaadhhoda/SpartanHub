@@ -1085,7 +1085,7 @@ function App() {
                       if (isScreenReaderMode) announce(`Source filter set to ${opt}`);
                     }}
                     aria-pressed={sourceFilter === opt}
-                    className={`px-3 py-1 rounded-md text-xs font-bold transition-all whitespace-nowrap
+                    className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-all whitespace-nowrap
                       ${sourceFilter === opt
                         ? 'bg-sjsu-blue text-white shadow-sm'
                         : isDarkMode
