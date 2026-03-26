@@ -1101,7 +1101,7 @@ function App() {
             <div className="h-6 w-px bg-gray-300 hidden md:block dark:bg-gray-600"></div>
 
             {/* Type Filters — scrolls horizontally within its flex cell */}
-            <div className="flex flex-1 min-w-0 items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+            <div className="flex flex-1 min-w-0 items-center gap-2 overflow-x-auto pb-3 no-scrollbar">
               {['All', 'PDF', 'VIDEO', 'LINK', 'DOC', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'CODE'].map((filter) => (
                 <button
                   key={filter}
