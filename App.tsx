@@ -49,6 +49,7 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('All');
+  const [sourceFilter, setSourceFilter] = useState<'All' | 'SJSU' | 'External'>('All');
 
   // Multi-select for Subjects
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
@@ -554,7 +555,14 @@ function App() {
 
     const matchesLevel = selectedLevel === 'All' || res.level === selectedLevel;
 
-    return matchesSearch && matchesType && matchesSubject && matchesLevel;
+    // Source filter: no source field = SJSU; source field set = External
+    const isExternal = !!(res.source && res.source.trim() !== '');
+    const matchesSource =
+      sourceFilter === 'All' ||
+      (sourceFilter === 'SJSU' && !isExternal) ||
+      (sourceFilter === 'External' && isExternal);
+
+    return matchesSearch && matchesType && matchesSubject && matchesLevel && matchesSource;
   });
 
   const popularResources = resources
@@ -562,7 +570,7 @@ function App() {
     .sort((a, b) => b.views - a.views)
     .slice(0, 4);
 
-  const isDefaultView = !searchTerm && activeFilter === 'All' && selectedSubjects.length === 0 && selectedLevel === 'All';
+  const isDefaultView = !searchTerm && activeFilter === 'All' && selectedSubjects.length === 0 && selectedLevel === 'All' && sourceFilter === 'All';
 
   const handleTagClick = (tag: string) => {
     setSearchTerm(tag);
@@ -1066,6 +1074,28 @@ function App() {
                 </select>
                 <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
+
+              {/* Source Filter: All / SJSU / External */}
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 border border-gray-200 dark:border-gray-700 gap-0.5">
+                {(['All', 'SJSU', 'External'] as const).map((opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => {
+                      setSourceFilter(opt);
+                      if (isScreenReaderMode) announce(`Source filter set to ${opt}`);
+                    }}
+                    aria-pressed={sourceFilter === opt}
+                    className={`px-3 py-1 rounded-md text-xs font-bold transition-all whitespace-nowrap
+                      ${sourceFilter === opt
+                        ? 'bg-sjsu-blue text-white shadow-sm'
+                        : isDarkMode
+                          ? 'text-gray-400 hover:text-gray-200'
+                          : 'text-gray-500 hover:text-gray-700'}`}
+                  >
+                    {opt === 'All' ? 'All' : `#${opt}`}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="h-6 w-px bg-gray-300 hidden md:block dark:bg-gray-600"></div>
@@ -1157,13 +1187,14 @@ function App() {
                 ? "The database is currently empty. Login to the Admin Console to upload content."
                 : "Try adjusting your subject, level, or type filters."}
             </p>
-            {(searchTerm || activeFilter !== 'All' || selectedSubjects.length > 0 || selectedLevel !== 'All') && resources.length > 0 && (
+            {(searchTerm || activeFilter !== 'All' || selectedSubjects.length > 0 || selectedLevel !== 'All' || sourceFilter !== 'All') && resources.length > 0 && (
               <button
                 onClick={() => {
                   setSearchTerm('');
                   setActiveFilter('All');
                   clearSubjectFilter();
                   setSelectedLevel('All');
+                  setSourceFilter('All');
                 }}
                 className="mt-4 text-sjsu-blue hover:underline font-medium dark:text-blue-400"
               >

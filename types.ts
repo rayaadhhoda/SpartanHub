@@ -31,6 +31,8 @@ export interface Resource {
   views: number;
   downloads: number;
   original_filename?: string | null;
+  source?: string | null;       // e.g. "Stanford University" — absent means SJSU
+  sourceUrl?: string | null;    // Link to the institution's AI use case page
 }
 
 export interface StatData {
