@@ -1009,7 +1009,7 @@ function App() {
       >
 
         {/* Page Header & Filters */}
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-6">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-6 min-w-0">
           <div>
             <h2 className="text-3xl font-serif font-bold text-gray-900 dark:text-white">Dashboard</h2>
             <p className="text-gray-500 mt-1 dark:text-gray-400">
@@ -1020,7 +1020,7 @@ function App() {
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center min-w-0 flex-1">
 
             {/* Filters Row */}
             <div className="flex items-center gap-3">
@@ -1100,8 +1100,8 @@ function App() {
 
             <div className="h-6 w-px bg-gray-300 hidden md:block dark:bg-gray-600"></div>
 
-            {/* Type Filters */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar max-w-[calc(100vw-2rem)] md:max-w-none">
+            {/* Type Filters — scrolls horizontally within its flex cell */}
+            <div className="flex flex-1 min-w-0 items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
               {['All', 'PDF', 'VIDEO', 'LINK', 'DOC', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'CODE'].map((filter) => (
                 <button
                   key={filter}
