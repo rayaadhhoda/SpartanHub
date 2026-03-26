@@ -408,26 +408,46 @@ const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
         );
       }
 
-      case ResourceType.LINK:
+      case ResourceType.LINK: {
+        const linkUrl = (resource.url || resource.external_url || '').trim();
+        if (!linkUrl) {
+          return (
+            <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-12 flex flex-col items-center justify-center text-center">
+              <div className="bg-white dark:bg-gray-700 p-4 rounded-full shadow-sm mb-4">
+                <ExternalLink size={48} className="text-sjsu-blue dark:text-blue-400" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">No URL provided</h3>
+            </div>
+          );
+        }
         return (
-          <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-12 flex flex-col items-center justify-center text-center">
-             <div className="bg-white dark:bg-gray-700 p-4 rounded-full shadow-sm mb-4">
-               <ExternalLink size={48} className="text-sjsu-blue dark:text-blue-400" />
-             </div>
-             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">External Resource</h3>
-             <p className="text-gray-600 dark:text-gray-300 max-w-md mb-6">
-               This resource is hosted on an external university server or website.
-             </p>
-             <a 
-               href={resource.url || "#"} 
-               target="_blank" 
-               rel="noopener noreferrer"
-               className="bg-sjsu-blue text-white px-6 py-2 rounded-full font-bold hover:bg-blue-800 transition-colors flex items-center gap-2 shadow-md"
-             >
-               Open Link <ExternalLink size={16} />
-             </a>
+          <div className="flex flex-col gap-3">
+            {/* Iframe embed attempt */}
+            <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm" style={{ height: '65vh' }}>
+              <iframe
+                title={resource.title}
+                src={linkUrl}
+                className="w-full h-full"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              />
+            </div>
+            {/* Always-visible escape hatch — browsers silently blank blocked iframes */}
+            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                If the page doesn't appear above, the site may block embedding.
+              </p>
+              <a
+                href={linkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-xs font-bold text-sjsu-blue dark:text-blue-400 hover:underline whitespace-nowrap ml-4"
+              >
+                Open directly <ExternalLink size={12} />
+              </a>
+            </div>
           </div>
         );
+      }
       case ResourceType.CODE:
         return (
           <div className="bg-gray-900 rounded-lg p-6 min-h-[50vh] overflow-x-auto border border-gray-800 font-mono text-sm text-gray-300">
