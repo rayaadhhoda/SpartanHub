@@ -555,8 +555,8 @@ function App() {
 
     const matchesLevel = selectedLevel === 'All' || res.level === selectedLevel;
 
-    // Source filter: no source field = SJSU; source field set = External
-    const isExternal = !!(res.source && res.source.trim() !== '');
+    // Source filter: no source field = SJSU; source field set OR 'external' tag = External
+    const isExternal = !!(res.source && res.source.trim() !== '') || res.tags.includes('external');
     const matchesSource =
       sourceFilter === 'All' ||
       (sourceFilter === 'SJSU' && !isExternal) ||
