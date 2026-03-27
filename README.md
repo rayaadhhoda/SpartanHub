@@ -4,6 +4,8 @@
 
 The platform allows administrators to upload and manage academic resources while enabling faculty to browse, search, and interact with content using an AI assistant powered by Google Gemini.
 
+**LIVE** https://spartan-hub.vercel.app/
+
 ---
 
 ## Features
