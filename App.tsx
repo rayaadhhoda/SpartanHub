@@ -571,6 +571,11 @@ function App() {
     if (r.title.includes('Texas A&M')) return 'Texas A&M University';
     if (r.title.includes('University of San Diego')) return 'University of San Diego';
     if (r.title.includes('—')) return r.title.split('—').pop()?.trim();
+    
+    // Parse cases like: "AI as Tutor (Stanford University Case Study)"
+    const match = r.title.match(/\((.+) Case Study\)/i);
+    if (match) return match[1].trim();
+
     return 'Other External';
   };
 
