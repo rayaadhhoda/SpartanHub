@@ -564,6 +564,16 @@ function App() {
   }
 
 
+  // Helper to extract institution since backend strips the 'source' field
+  const getInstName = (r: Resource) => {
+    if (!r.tags.includes('external')) return undefined;
+    if (r.title.includes('Columbia University')) return 'Columbia University';
+    if (r.title.includes('Texas A&M')) return 'Texas A&M University';
+    if (r.title.includes('University of San Diego')) return 'University of San Diego';
+    if (r.title.includes('—')) return r.title.split('—').pop()?.trim();
+    return 'Other External';
+  };
+
   const filteredResources = resources.filter(res => {
     // Only show online resources in dashboard
     if (res.status !== 'online') return false;
@@ -587,12 +597,18 @@ function App() {
       (sourceFilter === 'External' && isExternal);
 
     // Institution filter
-    const matchesInstitution = selectedInstitutions.length === 0 || (isExternal && res.source && selectedInstitutions.includes(res.source));
+    const instName = isExternal ? getInstName(res) : null;
+    const matchesInstitution = selectedInstitutions.length === 0 || (isExternal && instName && selectedInstitutions.includes(instName));
 
     return matchesSearch && matchesType && matchesSubject && matchesLevel && matchesSource && matchesInstitution;
   });
 
-  const availableInstitutions = Array.from(new Set(resources.filter(r => !!(r.source && r.source.trim() !== '') || r.tags.includes('external')).map(r => r.source).filter(Boolean))).sort();
+  const availableInstitutions = Array.from(new Set(
+    resources.filter(r => !!(r.source && r.source.trim() !== '') || r.tags.includes('external'))
+             .map(getInstName)
+             .filter(Boolean)
+  )) as string[];
+  availableInstitutions.sort();
 
   const popularResources = resources
     .filter(r => r.status === 'online' && r.views > 0)
