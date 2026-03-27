@@ -58,6 +58,7 @@ export const SJSU_DEPARTMENTS = [
   'Journalism and Mass Communications',
   'Justice Studies',
   'Kinesiology',
+  'Library and Information Science',
   'Linguistics and Language Development',
   'Marketing and Business Analytics',
   'Mathematics and Statistics',
