@@ -422,28 +422,29 @@ const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
         }
         return (
           <div className="flex flex-col gap-3">
+            {/* Always-visible escape hatch — browsers silently blank blocked iframes */}
+            <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3 shadow-sm">
+              <p className="text-sm font-medium text-sjsu-blue dark:text-blue-300">
+                Some external websites block embedding. If the preview below doesn't load:
+              </p>
+              <a
+                href={linkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm font-bold text-white bg-sjsu-blue hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 px-4 py-2 rounded-md transition-colors whitespace-nowrap ml-4"
+              >
+                Open Resource Directly <ExternalLink size={14} />
+              </a>
+            </div>
+            
             {/* Iframe embed attempt */}
-            <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm" style={{ height: '65vh' }}>
+            <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm" style={{ height: '55vh' }}>
               <iframe
                 title={resource.title}
                 src={linkUrl}
                 className="w-full h-full"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
               />
-            </div>
-            {/* Always-visible escape hatch — browsers silently blank blocked iframes */}
-            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                If the page doesn't appear above, the site may block embedding.
-              </p>
-              <a
-                href={linkUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs font-bold text-sjsu-blue dark:text-blue-400 hover:underline whitespace-nowrap ml-4"
-              >
-                Open directly <ExternalLink size={12} />
-              </a>
             </div>
           </div>
         );
