@@ -6,7 +6,7 @@ import SettingsModal from './components/SettingsModal';
 import AIChatWidget from './components/AIChatWidget';
 import ResourceViewerModal from './components/ResourceViewerModal';
 import AdminConsole from './components/AdminConsole';
-import { SJSU_SUBJECTS } from './constants';
+import { SJSU_SUBJECTS, SUBJECT_NAMES } from './constants';
 import { supabase } from "./supabase"; // make sure this import exists
 
 // Start with an empty database so the user can populate it
@@ -764,6 +764,7 @@ function App() {
               </button>
               {SJSU_SUBJECTS.map(subj => {
                 const isSelected = selectedSubjects.includes(subj);
+                const displayName = SUBJECT_NAMES[subj] || subj;
                 return (
                   <button
                     key={subj}
@@ -774,7 +775,7 @@ function App() {
                       }`}
                   >
                     {isSelected ? <CheckSquare size={16} className="text-sjsu-gold" /> : <Square size={16} />}
-                    {subj}
+                    <span className="truncate">{displayName}</span>
                   </button>
                 );
               })}
@@ -1046,9 +1047,10 @@ function App() {
                 >
                   <option value="All">All Subjects</option>
                   {selectedSubjects.length > 1 && <option value="Multiple" disabled>Multiple ({selectedSubjects.length})</option>}
-                  {SJSU_SUBJECTS.map(subj => (
-                    <option key={subj} value={subj}>{subj}</option>
-                  ))}
+                  {SJSU_SUBJECTS.map(subj => {
+                    const displayName = SUBJECT_NAMES[subj] || subj;
+                    return <option key={subj} value={subj}>{displayName}</option>;
+                  })}
                 </select>
                 <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>

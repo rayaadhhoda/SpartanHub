@@ -2,6 +2,7 @@
 import React from 'react';
 import { Resource, ResourceType } from '../types';
 import { FileText, PlayCircle, Link as LinkIcon, File, GraduationCap, Image as ImageIcon, Check, Presentation, FileSpreadsheet, Code, Eye, Download, ExternalLink } from 'lucide-react';
+import { SUBJECT_NAMES } from '../constants';
 
 interface ResourceCardProps {
   resource: Resource;
@@ -137,7 +138,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onClick, onTagCli
       <div className={`h-24 ${getBgColor()} flex items-center justify-center transition-colors relative`}>
         {getIcon()}
         <span className="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-bold text-gray-500 dark:text-gray-400 shadow-sm border border-gray-100 dark:border-gray-700">
-          {resource.subject}
+          {SUBJECT_NAMES[resource.subject] || resource.subject}
         </span>
         {resource.external_url && resource.type !== ResourceType.LINK && (
           <span className="absolute bottom-3 right-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-bold text-sjsu-blue dark:text-blue-300 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-1">

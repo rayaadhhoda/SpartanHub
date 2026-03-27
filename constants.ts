@@ -18,6 +18,46 @@ export const SJSU_SUBJECTS = [
   'XOC', 'XRS', 'XWC', 'ZOOL'
 ].sort();
 
+export const SUBJECT_NAMES: Record<string, string> = {
+  'AAS': 'African American Studies', 'ADV': 'Advertising', 'AE': 'Aerospace Engineering', 'AFAM': 'African American Studies', 
+  'AFRS': 'African American Studies', 'AMS': 'American Studies', 'ANI': 'Animation and Illustration', 'ANTH': 'Anthropology', 
+  'APSC': 'Applied Sciences', 'ARED': 'Art Education', 'ART': 'Art', 'ARTH': 'Art History', 'AS': 'Aerospace Studies', 
+  'ASIA': 'Asian Studies', 'ASTR': 'Astronomy', 'ATH': 'Athletics', 'AUD': 'Audiology', 'AVIA': 'Aviation', 
+  'BIOL': 'Biological Sciences', 'BME': 'Biomedical Engineering', 'BOT': 'Botany', 'BUS': 'Business', 'BUS1': 'Accounting', 
+  'BUS2': 'Finance', 'BUS3': 'Marketing', 'BUS4': 'Organization/Management', 'BUS5': 'Information Systems', 
+  'CA': 'Creative Arts', 'CCS': 'Chicana and Chicano Studies', 'CE': 'Civil Engineering', 'CHAD': 'Child & Adolescent Dev.', 
+  'CHE': 'Chemical Engineering', 'CHEM': 'Chemistry', 'CHHS': 'College of Health & Human Sciences', 'CHIN': 'Chinese', 
+  'CMPE': 'Computer Engineering', 'COLT': 'Comparative Literature', 'COMM': 'Communication Studies', 'CS': 'Computer Science', 
+  'DANC': 'Dance', 'DATA': 'Data Science', 'DSGD': 'Graphic Design', 'DSGN': 'Design', 'DSID': 'Industrial Design', 
+  'DSIT': 'Interior Design', 'ECON': 'Economics', 'EDAD': 'Educational Administration', 'EDAU': 'Audiology', 
+  'EDCO': 'Counselor Education', 'EDD': 'Educational Leadership', 'EDEL': 'Elementary Education', 'EDLD': 'Educational Leadership', 
+  'EDSC': 'Secondary Education', 'EDSE': 'Special Education', 'EDSP': 'Special Education', 'EDTE': 'Teacher Education', 
+  'EDUC': 'Education', 'EE': 'Electrical Engineering', 'ENED': 'Engineering Education', 'ENGL': 'English', 
+  'ENGR': 'Engineering', 'ENT': 'Entomology', 'ENVS': 'Environmental Studies', 'FLED': 'Foreign Language Ed', 
+  'FORL': 'Foreign Languages', 'FREN': 'French', 'FS': 'Forensic Science', 'GEOG': 'Geography', 'GEOL': 'Geology', 
+  'GERM': 'German', 'GERO': 'Gerontology', 'GLST': 'Global Studies', 'HA': 'Hospitality Administration', 'HEBR': 'Hebrew', 
+  'HIST': 'History', 'HPRF': 'Human Performance', 'HS': 'Health Science', 'HSPM': 'Hospitality & Tourism', 'HUM': 'Humanities', 
+  'INFM': 'Informatics', 'INFO': 'Information Science', 'ISDA': 'Information Systems & Data Analytics', 'ISE': 'Industrial & Systems Engr', 
+  'ITAL': 'Italian', 'JOUR': 'Journalism', 'JPN': 'Japanese', 'JS': 'Justice Studies', 'JWSS': 'Jewish Studies', 
+  'KIN': 'Kinesiology', 'KNED': 'Kinesiology Education', 'LING': 'Linguistics', 'LLD': 'Linguistics & Language Dev', 
+  'LSTP': 'Legal Studies', 'MARA': 'Archives & Records Admin', 'MAS': 'Mexican American Studies', 'MATE': 'Materials Engineering', 
+  'MATH': 'Mathematics', 'MCOM': 'Mass Communications', 'MDES': 'Media Design', 'ME': 'Mechanical Engineering', 
+  'METR': 'Meteorology', 'MICR': 'Microbiology', 'MILS': 'Military Science', 'MS': 'Materials Science', 
+  'MTED': 'Mathematics Education', 'MTM': 'Medical Product Dev', 'MUED': 'Music Education', 'MUSC': 'Music', 
+  'NUCS': 'Nuclear Science', 'NUFS': 'Nutrition & Food Science', 'NURS': 'Nursing', 'OCTH': 'Occupational Therapy', 
+  'ORGS': 'Organizational Studies', 'PADM': 'Public Administration', 'PH': 'Public Health', 'PHIL': 'Philosophy', 
+  'PHOT': 'Photography', 'PHYS': 'Physics', 'PKG': 'Packaging', 'POLS': 'Political Science', 'PORT': 'Portuguese', 
+  'PR': 'Public Relations', 'PSYC': 'Psychology', 'RECL': 'Recreation & Leisure', 'RELS': 'Religious Studies', 
+  'RTVF': 'Radio, TV & Film', 'RUSS': 'Russian', 'SCED': 'Science Education', 'SCI': 'Science', 'SCWK': 'Social Work', 
+  'SE': 'Software Engineering', 'SMPD': 'Software Materials', 'SOCI': 'Sociology', 'SOCS': 'Social Science', 
+  'SPAN': 'Spanish', 'SPED': 'Special Education', 'SSCI': 'Social Science', 'SSED': 'Social Science Education', 
+  'STAT': 'Statistics', 'TA': 'Theatre Arts', 'TAG': 'Tagalog', 'TECH': 'Technology', 'UNVS': 'University Studies', 
+  'URBP': 'Urban & Regional Planning', 'VIET': 'Vietnamese', 'WGSS': 'Women, Gender & Sexuality', 'WOMS': 'Women\'s Studies', 
+  'XGADM': 'Extended Graduate', 'XMPRJM': 'Project Management', 'XOC': 'Open Campus', 'XRS': 'Extended Record', 
+  'XWC': 'Extended Workplace', 'ZOOL': 'Zoology',
+  'GEN': 'General'
+};
+
 export const SJSU_DEPARTMENTS = [
   'African American Studies',
   'Aerospace Engineering',
