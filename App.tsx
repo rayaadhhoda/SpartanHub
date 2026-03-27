@@ -51,8 +51,10 @@ function App() {
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [sourceFilter, setSourceFilter] = useState<'All' | 'SJSU' | 'External'>('All');
 
-  // Multi-select for Subjects
+  // Multi-select for Subjects and Institutions
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([]);
+  const [isInstitutionDropdownOpen, setIsInstitutionDropdownOpen] = useState(false);
 
   const [selectedLevel, setSelectedLevel] = useState<string>('All');
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
@@ -518,10 +520,32 @@ function App() {
     });
   };
 
+
   const clearSubjectFilter = () => {
     setSelectedSubjects([]);
     if (isScreenReaderMode) announce("Cleared all subject filters");
   };
+
+  const toggleInstitutionFilter = (inst: string) => {
+    setSelectedInstitutions(prev => {
+      const newSelection = prev.includes(inst)
+        ? prev.filter(i => i !== inst)
+        : [...prev, inst];
+      if (isScreenReaderMode) announce(newSelection.includes(inst) ? `Selected ${inst}` : `Deselected ${inst}`);
+      return newSelection;
+    });
+  };
+
+  const clearInstitutionFilter = () => {
+    setSelectedInstitutions([]);
+    if (isScreenReaderMode) announce("Cleared all institution filters");
+  };
+
+  useEffect(() => {
+    if (sourceFilter !== 'External') {
+      setIsInstitutionDropdownOpen(false);
+    }
+  }, [sourceFilter]);
 
   if (view === 'admin') {
     return (
@@ -562,8 +586,13 @@ function App() {
       (sourceFilter === 'SJSU' && !isExternal) ||
       (sourceFilter === 'External' && isExternal);
 
-    return matchesSearch && matchesType && matchesSubject && matchesLevel && matchesSource;
+    // Institution filter
+    const matchesInstitution = selectedInstitutions.length === 0 || (isExternal && res.source && selectedInstitutions.includes(res.source));
+
+    return matchesSearch && matchesType && matchesSubject && matchesLevel && matchesSource && matchesInstitution;
   });
+
+  const availableInstitutions = Array.from(new Set(resources.filter(r => !!(r.source && r.source.trim() !== '') || r.tags.includes('external')).map(r => r.source).filter(Boolean))).sort();
 
   const popularResources = resources
     .filter(r => r.status === 'online' && r.views > 0)
@@ -1054,7 +1083,7 @@ function App() {
               </div>
 
               {/* Level Dropdown */}
-              <div className="relative">
+              <div className="relative flex-none">
                 <select
                   value={selectedLevel}
                   onChange={(e) => {
@@ -1075,8 +1104,61 @@ function App() {
                 <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
 
+              {/* Dynamic Institution Filter (Only for External) */}
+              {sourceFilter === 'External' && availableInstitutions.length > 0 && (
+                <div className="relative flex-none">
+                  <button
+                    onClick={() => setIsInstitutionDropdownOpen(!isInstitutionDropdownOpen)}
+                    className={`flex items-center gap-2 pl-4 pr-3 py-2 border rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sjsu-blue cursor-pointer shadow-sm transition-all
+                      ${isInstitutionDropdownOpen || selectedInstitutions.length > 0
+                        ? 'bg-sjsu-blue/10 border-sjsu-blue text-sjsu-blue dark:text-blue-400 dark:border-blue-500'
+                        : isDarkMode
+                          ? 'bg-gray-800 border-gray-700 text-gray-200 hover:border-sjsu-blue'
+                          : 'bg-white border-gray-200 text-gray-700 hover:border-sjsu-blue'}`}
+                  >
+                    {selectedInstitutions.length === 0
+                      ? 'All Institutions'
+                      : `${selectedInstitutions.length} Selected`}
+                    <ChevronDown size={16} className={`transition-transform duration-200 ${isInstitutionDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {isInstitutionDropdownOpen && (
+                    <div className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+                      <div className="max-h-60 overflow-y-auto p-1">
+                        <button
+                          onClick={clearInstitutionFilter}
+                          className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 ${selectedInstitutions.length === 0
+                            ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400 font-bold'
+                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                            }`}
+                        >
+                          {selectedInstitutions.length === 0 ? <CheckSquare size={16} /> : <Square size={16} />}
+                          All Institutions
+                        </button>
+                        {availableInstitutions.map(inst => {
+                          const isSelected = selectedInstitutions.includes(inst);
+                          return (
+                            <button
+                              key={inst}
+                              onClick={() => toggleInstitutionFilter(inst)}
+                              className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${isSelected
+                                ? 'bg-sjsu-blue text-white shadow-sm'
+                                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                }`}
+                            >
+                              {isSelected ? <CheckSquare size={16} className="text-sjsu-gold flex-shrink-0" /> : <Square size={16} className="flex-shrink-0" />}
+                              <span className="truncate">{inst}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Source Filter: All / SJSU / External */}
-              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 border border-gray-200 dark:border-gray-700 gap-0.5">
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 border border-gray-200 dark:border-gray-700 gap-0.5 ml-auto">
                 {(['All', 'SJSU', 'External'] as const).map((opt) => (
                   <button
                     key={opt}
