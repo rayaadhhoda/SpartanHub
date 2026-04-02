@@ -55,6 +55,7 @@ function App() {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([]);
   const [isInstitutionDropdownOpen, setIsInstitutionDropdownOpen] = useState(false);
+  const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
 
   const [selectedLevel, setSelectedLevel] = useState<string>('All');
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
@@ -1203,26 +1204,47 @@ function App() {
 
             <div className="h-6 w-px bg-gray-300 hidden md:block dark:bg-gray-600"></div>
 
-            {/* Type Filters — scrolls horizontally within its flex cell */}
-            <div className="flex flex-1 min-w-0 items-center gap-2 overflow-x-auto pb-3 no-scrollbar">
-              {['All', 'PDF', 'VIDEO', 'LINK', 'DOC', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'CODE'].map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => {
-                    setActiveFilter(filter);
-                    if (isScreenReaderMode) announce(`Type filter set to ${filter}`);
-                  }}
-                  aria-pressed={activeFilter === filter}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap border
-                    ${activeFilter === filter
-                      ? 'bg-sjsu-blue text-white shadow-md border-sjsu-blue'
-                      : isDarkMode
-                        ? 'bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700'
-                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
-                >
-                  {filter === 'All' ? 'All Types' : filter}
-                </button>
-              ))}
+            {/* Type Filter — compact dropdown */}
+            <div className="relative flex-none">
+              <button
+                onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
+                className={`flex items-center gap-2 pl-4 pr-3 py-2 border rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sjsu-blue cursor-pointer shadow-sm transition-all
+                  ${isTypeDropdownOpen || activeFilter !== 'All'
+                    ? 'bg-sjsu-blue/10 border-sjsu-blue text-sjsu-blue dark:text-blue-400 dark:border-blue-500'
+                    : isDarkMode
+                      ? 'bg-gray-800 border-gray-700 text-gray-200 hover:border-sjsu-blue'
+                      : 'bg-white border-gray-200 text-gray-700 hover:border-sjsu-blue'}`}
+              >
+                {activeFilter === 'All' ? 'All Types' : activeFilter}
+                <ChevronDown size={16} className={`transition-transform duration-200 ${isTypeDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isTypeDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+                  <div className="max-h-72 overflow-y-auto p-1">
+                    {['All', 'PDF', 'VIDEO', 'LINK', 'DOC', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'CODE'].map((filter) => (
+                      <button
+                        key={filter}
+                        onClick={() => {
+                          setActiveFilter(filter);
+                          setIsTypeDropdownOpen(false);
+                          if (isScreenReaderMode) announce(`Type filter set to ${filter}`);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
+                          activeFilter === filter
+                            ? 'bg-sjsu-blue text-white shadow-sm'
+                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {activeFilter === filter
+                          ? <CheckSquare size={16} className="text-sjsu-gold flex-shrink-0" />
+                          : <Square size={16} className="flex-shrink-0" />}
+                        {filter === 'All' ? 'All Types' : filter}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
