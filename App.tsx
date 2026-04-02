@@ -548,6 +548,21 @@ function App() {
     }
   }, [sourceFilter]);
 
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-dropdown="institution"]')) {
+        setIsInstitutionDropdownOpen(false);
+      }
+      if (!target.closest('[data-dropdown="type"]')) {
+        setIsTypeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   if (view === 'admin') {
     return (
       <AdminConsole
@@ -1128,7 +1143,7 @@ function App() {
 
               {/* Dynamic Institution Filter (Only for External) */}
               {sourceFilter === 'External' && availableInstitutions.length > 0 && (
-                <div className="relative flex-none">
+                <div className="relative flex-none" data-dropdown="institution">
                   <button
                     onClick={() => setIsInstitutionDropdownOpen(!isInstitutionDropdownOpen)}
                     className={`flex items-center gap-2 pl-4 pr-3 py-2 border rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sjsu-blue cursor-pointer shadow-sm transition-all
@@ -1205,7 +1220,7 @@ function App() {
             <div className="h-6 w-px bg-gray-300 hidden md:block dark:bg-gray-600"></div>
 
             {/* Type Filter — multi-select dropdown */}
-            <div className="relative flex-none">
+            <div className="relative flex-none" data-dropdown="type">
               <button
                 onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
                 className={`flex items-center gap-2 pl-4 pr-3 py-2 border rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sjsu-blue cursor-pointer shadow-sm transition-all
