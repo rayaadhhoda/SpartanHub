@@ -48,7 +48,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<string>('All');
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [sourceFilter, setSourceFilter] = useState<'All' | 'SJSU' | 'External'>('All');
 
   // Multi-select for Subjects and Institutions
@@ -588,7 +588,7 @@ function App() {
       res.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       res.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const matchesType = activeFilter === 'All' || res.type === activeFilter;
+    const matchesType = selectedTypes.length === 0 || selectedTypes.includes(res.type);
 
     // Multi-select subject matching: If array is empty, show all. Else, must be in array.
     const matchesSubject = selectedSubjects.length === 0 || selectedSubjects.includes(res.subject);
@@ -621,7 +621,7 @@ function App() {
     .sort((a, b) => b.views - a.views)
     .slice(0, 4);
 
-  const isDefaultView = !searchTerm && activeFilter === 'All' && selectedSubjects.length === 0 && selectedLevel === 'All' && sourceFilter === 'All';
+  const isDefaultView = !searchTerm && selectedTypes.length === 0 && selectedSubjects.length === 0 && selectedLevel === 'All' && sourceFilter === 'All';
 
   const handleTagClick = (tag: string) => {
     setSearchTerm(tag);
@@ -1204,44 +1204,60 @@ function App() {
 
             <div className="h-6 w-px bg-gray-300 hidden md:block dark:bg-gray-600"></div>
 
-            {/* Type Filter — compact dropdown */}
+            {/* Type Filter — multi-select dropdown */}
             <div className="relative flex-none">
               <button
                 onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
                 className={`flex items-center gap-2 pl-4 pr-3 py-2 border rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sjsu-blue cursor-pointer shadow-sm transition-all
-                  ${isTypeDropdownOpen || activeFilter !== 'All'
+                  ${isTypeDropdownOpen || selectedTypes.length > 0
                     ? 'bg-sjsu-blue/10 border-sjsu-blue text-sjsu-blue dark:text-blue-400 dark:border-blue-500'
                     : isDarkMode
                       ? 'bg-gray-800 border-gray-700 text-gray-200 hover:border-sjsu-blue'
                       : 'bg-white border-gray-200 text-gray-700 hover:border-sjsu-blue'}`}
               >
-                {activeFilter === 'All' ? 'All Types' : activeFilter}
+                {selectedTypes.length === 0 ? 'All Types' : `${selectedTypes.length} Type${selectedTypes.length > 1 ? 's' : ''}`}
                 <ChevronDown size={16} className={`transition-transform duration-200 ${isTypeDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isTypeDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
                   <div className="max-h-72 overflow-y-auto p-1">
-                    {['All', 'PDF', 'VIDEO', 'LINK', 'DOC', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'CODE'].map((filter) => (
-                      <button
-                        key={filter}
-                        onClick={() => {
-                          setActiveFilter(filter);
-                          setIsTypeDropdownOpen(false);
-                          if (isScreenReaderMode) announce(`Type filter set to ${filter}`);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
-                          activeFilter === filter
-                            ? 'bg-sjsu-blue text-white shadow-sm'
-                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        }`}
-                      >
-                        {activeFilter === filter
-                          ? <CheckSquare size={16} className="text-sjsu-gold flex-shrink-0" />
-                          : <Square size={16} className="flex-shrink-0" />}
-                        {filter === 'All' ? 'All Types' : filter}
-                      </button>
-                    ))}
+                    {/* Clear all */}
+                    <button
+                      onClick={() => { setSelectedTypes([]); if (isScreenReaderMode) announce('Cleared type filters'); }}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 ${
+                        selectedTypes.length === 0
+                          ? 'bg-sjsu-blue/10 text-sjsu-blue dark:text-blue-400 font-bold'
+                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {selectedTypes.length === 0 ? <CheckSquare size={16} /> : <Square size={16} />}
+                      All Types
+                    </button>
+                    {['PDF', 'VIDEO', 'LINK', 'DOC', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'CODE'].map((filter) => {
+                      const isSelected = selectedTypes.includes(filter);
+                      return (
+                        <button
+                          key={filter}
+                          onClick={() => {
+                            setSelectedTypes(prev =>
+                              isSelected ? prev.filter(t => t !== filter) : [...prev, filter]
+                            );
+                            if (isScreenReaderMode) announce(`${isSelected ? 'Removed' : 'Added'} ${filter} type filter`);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
+                            isSelected
+                              ? 'bg-sjsu-blue text-white shadow-sm'
+                              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          {isSelected
+                            ? <CheckSquare size={16} className="text-sjsu-gold flex-shrink-0" />
+                            : <Square size={16} className="flex-shrink-0" />}
+                          {filter}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -1312,11 +1328,11 @@ function App() {
                 ? "The database is currently empty. Login to the Admin Console to upload content."
                 : "Try adjusting your subject, level, or type filters."}
             </p>
-            {(searchTerm || activeFilter !== 'All' || selectedSubjects.length > 0 || selectedLevel !== 'All' || sourceFilter !== 'All') && resources.length > 0 && (
+            {(searchTerm || selectedTypes.length > 0 || selectedSubjects.length > 0 || selectedLevel !== 'All' || sourceFilter !== 'All') && resources.length > 0 && (
               <button
                 onClick={() => {
                   setSearchTerm('');
-                  setActiveFilter('All');
+                  setSelectedTypes([]);
                   clearSubjectFilter();
                   setSelectedLevel('All');
                   setSourceFilter('All');
