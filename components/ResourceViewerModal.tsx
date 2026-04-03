@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Download, Share2, ExternalLink, FileText, Play, Image as ImageIcon, CheckCircle, Presentation, FileSpreadsheet, Code, Volume2, Link as LinkIcon, File, Eye, Quote, Copy } from 'lucide-react';
+import { X, Download, Share2, ExternalLink, FileText, Play, Image as ImageIcon, CheckCircle, Presentation, FileSpreadsheet, Code, Volume2, Link as LinkIcon, File, Eye, Quote, Copy, BookOpen } from 'lucide-react';
 import { Resource, ResourceType } from '../types';
 
 interface ResourceViewerModalProps {
@@ -205,6 +205,7 @@ const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
       case ResourceType.PDF: return <FileText size={16} className="text-red-500" />;
       case ResourceType.LINK: return <LinkIcon size={16} className="text-green-500" />;
       case ResourceType.PRESENTATION: return <Presentation size={16} className="text-orange-500" />;
+      case ResourceType.ARTICLE: return <BookOpen size={16} className="text-purple-500" />;
       default: return <File size={16} className="text-gray-500" />;
     }
   };
@@ -408,6 +409,9 @@ const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
         );
       }
 
+      case ResourceType.ARTICLE:
+      // falls through — articles are external web pages, render same as LINK
+      // eslint-disable-next-line no-fallthrough
       case ResourceType.LINK: {
         const linkUrl = (resource.url || resource.external_url || '').trim();
         if (!linkUrl) {

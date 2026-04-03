@@ -7,7 +7,8 @@ export enum ResourceType {
   IMAGE = 'IMAGE',
   PRESENTATION = 'PRESENTATION',
   SPREADSHEET = 'SPREADSHEET',
-  CODE = 'CODE'
+  CODE = 'CODE',
+  ARTICLE = 'ARTICLE'
 }
 
 export type AcademicLevel = 'Undergraduate' | 'Graduate' | 'Faculty/Admin';

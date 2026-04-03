@@ -818,7 +818,7 @@ const AdminConsole: React.FC<AdminConsoleProps> = ({
                   <div className="grid grid-cols-4 gap-2">
                     {[
                       ResourceType.PDF, ResourceType.DOC, ResourceType.PRESENTATION, ResourceType.SPREADSHEET,
-                      ResourceType.VIDEO, ResourceType.IMAGE, ResourceType.CODE, ResourceType.LINK
+                      ResourceType.VIDEO, ResourceType.IMAGE, ResourceType.CODE, ResourceType.LINK, ResourceType.ARTICLE
                     ].map((type) => (
                       <button
                         key={type}

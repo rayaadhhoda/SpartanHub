@@ -1249,7 +1249,7 @@ function App() {
                       {selectedTypes.length === 0 ? <CheckSquare size={16} /> : <Square size={16} />}
                       All Types
                     </button>
-                    {['PDF', 'VIDEO', 'LINK', 'DOC', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'CODE'].map((filter) => {
+                    {['PDF', 'VIDEO', 'LINK', 'DOC', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'CODE', 'ARTICLE'].map((filter) => {
                       const isSelected = selectedTypes.includes(filter);
                       return (
                         <button
