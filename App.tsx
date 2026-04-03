@@ -612,11 +612,12 @@ function App() {
 
     // Source filter: no source field = SJSU; source field set OR 'external' tag = External
     const isExternal = !!(res.source && res.source.trim() !== '') || res.tags.includes('external');
+    const isPedagogy = res.tags.includes('pedagogy');
     const matchesSource =
       sourceFilter === 'All' ||
-      (sourceFilter === 'SJSU' && !isExternal && res.type !== 'ARTICLE') ||
-      (sourceFilter === 'External' && isExternal) ||
-      (sourceFilter === 'Articles' && res.type === 'ARTICLE');
+      (sourceFilter === 'SJSU' && !isExternal && !isPedagogy) ||
+      (sourceFilter === 'External' && isExternal && !isPedagogy) ||
+      (sourceFilter === 'Articles' && isPedagogy);
 
     // Institution filter
     const instName = isExternal ? getInstName(res) : null;
