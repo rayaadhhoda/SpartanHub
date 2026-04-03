@@ -354,15 +354,16 @@ const AdminConsole: React.FC<AdminConsoleProps> = ({
     t === ResourceType.PDF || allowsUploadOrLink(t);
 
   const showsPrimaryUrlField = (t: ResourceType) =>
-    t === ResourceType.LINK || allowsUploadOrLink(t);
+    t === ResourceType.LINK || t === ResourceType.ARTICLE || allowsUploadOrLink(t);
 
   const primaryUrlLabel = (t: ResourceType) =>
-    t === ResourceType.LINK ? "External Resource URL" : "Link (optional if uploading)";
+    t === ResourceType.LINK || t === ResourceType.ARTICLE ? "Resource URL" : "Link (optional if uploading)";
 
   const primaryUrlPlaceholder = (t: ResourceType) => {
     if (t === ResourceType.VIDEO) return "YouTube / Drive / direct MP4 URL";
     if (t === ResourceType.DOC) return "Google Doc / direct DOCX URL";
     if (t === ResourceType.PRESENTATION) return "Google Slides / direct PPTX URL";
+    if (t === ResourceType.ARTICLE) return "https://... (article or guide URL)";
     return "https://...";
   };
 
@@ -828,9 +829,9 @@ const AdminConsole: React.FC<AdminConsoleProps> = ({
                             ...prev,
                             type,
 
-                            // avoid stale fields carrying between LINK vs non-LINK
-                            url: type === ResourceType.LINK ? prev.url : "",
-                            external_url: type === ResourceType.LINK ? "" : prev.external_url,
+                            // avoid stale fields carrying between LINK/ARTICLE vs file-upload types
+                            url: (type === ResourceType.LINK || type === ResourceType.ARTICLE) ? prev.url : "",
+                            external_url: (type === ResourceType.LINK || type === ResourceType.ARTICLE) ? "" : prev.external_url,
                           }));
 
                           setSelectedFile(null);
@@ -960,7 +961,7 @@ const AdminConsole: React.FC<AdminConsoleProps> = ({
                         className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-sjsu-blue focus:border-transparent outline-none transition-all dark:text-white"
                       />
 
-                      {formData.type !== ResourceType.LINK && (
+                      {formData.type !== ResourceType.LINK && formData.type !== ResourceType.ARTICLE && (
                         <p className="text-xs text-gray-400 pl-1">
                           For {formData.type}, you can either upload a file below <strong>or</strong> paste a link here.
                         </p>
