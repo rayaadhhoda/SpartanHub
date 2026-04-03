@@ -49,7 +49,7 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [sourceFilter, setSourceFilter] = useState<'All' | 'SJSU' | 'External'>('All');
+  const [sourceFilter, setSourceFilter] = useState<'All' | 'SJSU' | 'External' | 'Articles'>('All');
 
   // Multi-select for Subjects and Institutions
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
@@ -614,8 +614,9 @@ function App() {
     const isExternal = !!(res.source && res.source.trim() !== '') || res.tags.includes('external');
     const matchesSource =
       sourceFilter === 'All' ||
-      (sourceFilter === 'SJSU' && !isExternal) ||
-      (sourceFilter === 'External' && isExternal);
+      (sourceFilter === 'SJSU' && !isExternal && res.type !== 'ARTICLE') ||
+      (sourceFilter === 'External' && isExternal) ||
+      (sourceFilter === 'Articles' && res.type === 'ARTICLE');
 
     // Institution filter
     const instName = isExternal ? getInstName(res) : null;
@@ -1196,7 +1197,7 @@ function App() {
 
               {/* Source Filter: All / SJSU / External */}
               <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 border border-gray-200 dark:border-gray-700 gap-0.5 ml-auto">
-                {(['All', 'SJSU', 'External'] as const).map((opt) => (
+                {(['All', 'SJSU', 'External', 'Articles'] as const).map((opt) => (
                   <button
                     key={opt}
                     onClick={() => {
@@ -1211,7 +1212,7 @@ function App() {
                           ? 'text-gray-400 hover:text-gray-200'
                           : 'text-gray-500 hover:text-gray-700'}`}
                   >
-                    {opt === 'All' ? 'All' : `#${opt}`}
+                    {opt === 'All' ? 'All' : opt === 'Articles' ? '📄 Articles' : `#${opt}`}
                   </button>
                 ))}
               </div>
