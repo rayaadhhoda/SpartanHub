@@ -1213,7 +1213,7 @@ function App() {
                           ? 'text-gray-400 hover:text-gray-200'
                           : 'text-gray-500 hover:text-gray-700'}`}
                   >
-                    {opt === 'All' ? 'All' : opt === 'Articles' ? '📄 Articles' : `#${opt}`}
+                    {opt}
                   </button>
                 ))}
               </div>
